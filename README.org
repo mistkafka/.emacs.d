@@ -1,0 +1,6 @@
+#+TITLE: README
+
+这是我个人真正意义上的第一份emacs配置。
+
+* TODO layout管理 -- eyebrower + window pourse
+* TODO 代码补全 -- lsp-mode

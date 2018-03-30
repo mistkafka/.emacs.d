@@ -90,10 +90,10 @@
   (mistkafka/git-project/copy-file-name-to-clipboard 
    (mistkafka/git-project/get-file-name-in-project)))
 
-(global-set-key (kbd "C-x p f") 'mistkafka/git-project/find-file)
-(global-set-key (kbd "C-x p g") 'mistkafka/git-project/git-grep)
-(global-set-key (kbd "C-x p G") 'mistkafka/git-project/reactive-git-grep)
-(global-set-key (kbd "C-x p s") 'bookmark-jump)
+(mistkafka/keyboard/bind "pf" 'mistkafka/git-project/find-file)
+(mistkafka/keyboard/bind "pg" 'mistkafka/git-project/git-grep)
+(mistkafka/keyboard/bind "pG" 'mistkafka/git-project/reactive-git-grep)
+(mistkafka/keyboard/bind "ps" 'bookmark-jump)
 
 
 
