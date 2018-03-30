@@ -8,4 +8,8 @@
 ;; 默认启动ivy-mode
 (ivy-mode 1)
 
+;; 我更喜欢带正则表达式的search
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+
 (provide 'init-misc)

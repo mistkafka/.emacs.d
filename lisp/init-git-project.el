@@ -1,6 +1,6 @@
 ;;; -*- lexical-binding: t -*-
 
-(defun mistkafka/git-project-get-git-root-path (&optional current-path)
+(defun mistkafka/git-project/get-git-root-path (&optional current-path)
   "get the CURRENT-PATH's git root path"
   (interactive)
   (unless current-path
@@ -89,5 +89,12 @@
   (interactive)
   (mistkafka/git-project/copy-file-name-to-clipboard 
    (mistkafka/git-project/get-file-name-in-project)))
+
+(global-set-key (kbd "C-x p f") 'mistkafka/git-project/find-file)
+(global-set-key (kbd "C-x p g") 'mistkafka/git-project/git-grep)
+(global-set-key (kbd "C-x p G") 'mistkafka/git-project/reactive-git-grep)
+(global-set-key (kbd "C-x p s") 'bookmark-jump)
+
+
 
 (provide 'init-git-project)
