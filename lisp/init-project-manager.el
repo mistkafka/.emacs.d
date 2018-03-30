@@ -29,11 +29,30 @@
        "\n"
        t))))
 
-(defun mistkafka/project-manager/git-grep ()
+(defun mistkafka/project-manager/reactive-git-grep ()
+  "实时输入pattern进行git grep。适用于小项目。"
   (interactive)
   (let* ((start-path (mistkafka/get-git-root-path))
 	 (collect-fn (mistkafka/project-manager/get-do-git-grep-function start-path))
 	 (seleted (ivy-read "pattern: " collect-fn))
+	 lst)
+    (when seleted
+      (setq lst (split-string seleted ":"))
+      (find-file (car lst))
+      (goto-char (point-min))
+      (forward-line (1- (string-to-number (cadr lst)))))
+    )
+  )
+
+(defun mistkafka/project-manager-git-grep ()
+  "输入一段pattern，然后进行git grep。适用于大项目。"
+  (interactive)
+  (let* ((default-directory (mistkafka/get-git-root-path))
+	 (keyword (ivy-read "keyword: " nil))
+	 (cmd (format "git --no-pager grep --full-name -n --no-color -i -e \"%s\"" keyword))
+	 (result-str (shell-command-to-string cmd))
+	 (result (split-string result-str "\n" t))
+	 (seleted (ivy-read "choose: " result))
 	 lst)
     (when seleted
       (setq lst (split-string seleted ":"))
