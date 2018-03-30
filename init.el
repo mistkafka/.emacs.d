@@ -10,7 +10,7 @@
 
 ;; 加载配置
 (require 'init-org)
-(require 'init-project-manager)
+(require 'init-git-project)
 (require 'init-typescript)
 (require 'init-misc)
 
