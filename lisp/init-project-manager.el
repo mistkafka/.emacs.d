@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t -*-
+
 (defconst mistkafka-project-manager-store-path "~/.emacs.d/.cache/mistkafka-projects" "用来保存曾经打开过的git项目")
 
 (defun mistkafka/get-git-root-path (&optional current-path)
@@ -18,14 +20,20 @@
       (goto-char (point-min))
       )))
 
-(defun mistkafka/project-manager-git-grep ()
+(defun mistkafka/project-manager/get-do-git-grep-function (path)
+  "return a ivy-collect-function with bind `default-directory' to PATH"
+  (lambda (string &optional _pred &rest _u)
+    (let ((default-directory path))
+      (split-string
+       (shell-command-to-string (format "git --no-pager grep --full-name -n --no-color -i -e \"%s\"" string))
+       "\n"
+       t))))
+
+(defun mistkafka/project-manager/git-grep ()
   (interactive)
-  (let* ((default-directory (mistkafka/get-git-root-path))
-	 (keyword (ivy-read "keyword: " nil))
-	 (cmd (format "git --no-pager grep --full-name -n --no-color -i -e \"%s\"" keyword))
-	 (result-str (shell-command-to-string cmd))
-	 (result (split-string result-str "\n" t))
-	 (seleted (ivy-read "choose: " result))
+  (let* ((start-path (mistkafka/get-git-root-path))
+	 (collect-fn (mistkafka/project-manager/get-do-git-grep-function start-path))
+	 (seleted (ivy-read "pattern: " collect-fn))
 	 lst)
     (when seleted
       (setq lst (split-string seleted ":"))
