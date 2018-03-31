@@ -2,5 +2,16 @@
 
 这是我个人真正意义上的第一份emacs配置。
 
-* TODO layout管理 -- eyebrower + window pourse
-* TODO 代码补全 -- lsp-mode
+* DONE layout管理 -- eyebrower + +window pourse+
+  - State "DONE"       from "TODO"       [2018-04-01 Sun 04:17]
+* DONE 代码补全 -- lsp-mode
+  - State "DONE"       from "TODO"       [2018-04-01 Sun 04:17]
+* TODO 配置代码清理                                                  :config:
+  - 按编程语言来划分配置
+* TODO 迁移yasnippet                                                 :config:
+* TODO 学习emacs最原生的按键绑定 [[http://ergoemacs.org/emacs/emacs_kb_shortcuts.html][Link]]                                 :learn:
+* TODO 给which-key的prefix命名                                       :config:
+* TODO layout管理优化
+  - [ ] layout带有命名，使之方便识别切换
+  - [ ] 切换layout支持首字母快捷切换
+* TODO 迁移在spacemacs里写的自定义command                            :config:

@@ -1,5 +1,3 @@
-(setq debug-on-error t)			; 多学学debug
-
 ;; 初始化包管理器，指向国内的镜像仓库
 (package-initialize)
 (setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
@@ -30,7 +28,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files (quote ("~/gtd/index.org.gpg")))
- '(package-selected-packages (quote (which-key tide typescript-mode magit ivy))))
+ '(package-selected-packages
+   (quote
+    (lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
