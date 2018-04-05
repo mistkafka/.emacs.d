@@ -21,7 +21,7 @@
 (defun mistkafka/org-setup-org-crypt ()
   "加密文章：http://coldnew.github.io/blog/2013/07/13_5b094.htm"
   
-  (require-package 'org-crypt)
+  (require 'org-crypt)
   (org-crypt-use-before-save-magic)
   (setq org-crypt-tag-matcher "secret")
   (setq org-tags-exclude-from-inheritance (quote ("secret")))
