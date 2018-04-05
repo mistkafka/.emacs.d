@@ -91,4 +91,8 @@
   (eval-buffer)
   (ert t))
 
+;; ssh远程链接(tramp)
+(require 'tramp-cache)
+(setq tramp-persistency-file-name "/Users/mistkafka/.emacs.d/.cache/tramp")
+
 (provide 'init-misc)

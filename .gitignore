@@ -1,3 +1,9 @@
 *.el~
+\#*
+
 .cache
 elpa
+
+eshell/history
+eshell/alias
+eshell/lastdir
