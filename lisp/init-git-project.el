@@ -32,15 +32,16 @@
 (defun mistkafka/git-project/reactive-git-grep ()
   "实时输入pattern进行git grep。适用于小项目。"
   (interactive)
-  (let* ((start-path (mistkafka/git-project/get-git-root-path))
-	 (collect-fn (mistkafka/git-project/get-do-git-grep-function start-path))
+  (let* ((default-directory (mistkafka/git-project/get-git-root-path))
+	 (collect-fn (mistkafka/git-project/get-do-git-grep-function default-directory))
 	 (seleted (ivy-read "pattern: " collect-fn))
 	 lst)
     (when seleted
       (setq lst (split-string seleted ":"))
       (find-file (car lst))
       (goto-char (point-min))
-      (forward-line (1- (string-to-number (cadr lst)))))
+      (forward-line (1- (string-to-number (cadr lst))))
+      )
     )
   )
 
@@ -58,7 +59,8 @@
       (setq lst (split-string seleted ":"))
       (find-file (car lst))
       (goto-char (point-min))
-      (forward-line (1- (string-to-number (cadr lst)))))
+      (forward-line (1- (string-to-number (cadr lst))))
+      )
     )
   )
 
