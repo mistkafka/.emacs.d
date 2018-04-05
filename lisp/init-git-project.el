@@ -1,6 +1,6 @@
 ;;; -*- lexical-binding: t -*-
 
-(require 's)
+(require-package 's)
 
 (defun mistkafka/git-project/get-git-root-path (&optional current-path)
   "get the CURRENT-PATH's git root path"
