@@ -9,9 +9,15 @@
 * TODO 配置代码清理                                                  :config:
   - 按编程语言来划分配置
 * TODO 迁移yasnippet                                                 :config:
-* TODO 学习emacs最原生的按键绑定 [[http://ergoemacs.org/emacs/emacs_kb_shortcuts.html][Link]]                                 :learn:
+* CANCELLED 学习emacs最原生的按键绑定 [[http://ergoemacs.org/emacs/emacs_kb_shortcuts.html][Link]]                            :learn:
+  - State "CANCELLED"  from "TODO"       [2018-04-01 Sun 14:27] \\
+    没什么价值
 * TODO 给which-key的prefix命名                                       :config:
 * TODO layout管理优化
   - [ ] layout带有命名，使之方便识别切换
   - [ ] 切换layout支持首字母快捷切换
 * TODO 迁移在spacemacs里写的自定义command                            :config:
+* TODO 启动页面配置
+  - [ ] 放置最近修改的文件
+  - [ ] 放置最近打开的git项目
+  - [ ] 放置书签

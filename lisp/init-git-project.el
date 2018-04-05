@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t -*-
 
+(require 's)
+
 (defun mistkafka/git-project/get-git-root-path (&optional current-path)
   "get the CURRENT-PATH's git root path"
   (interactive)
@@ -90,11 +92,63 @@
   (mistkafka/git-project/copy-file-name-to-clipboard 
    (mistkafka/git-project/get-file-name-in-project)))
 
+(defvar mistkafka/git-project/locate-paths-of-code '("gllue" "elisp" "node.js" "front-end" "elisp")
+  "更新projects时，需要扫描的几个文件夹")
+
+(defvar mistkafka/git-project/cache-file-path "/Users/mistkafka/.emacs.d/.cache/git-projects"
+  "缓存文件的路径")
+
+(defvar mistkafka/git-project/cache nil
+  "projects的缓存")
+
+(defun mistkafka/git-project/read-projects-cache ()
+  "从缓存文件中读取projects，并返回。"
+  (with-temp-buffer
+    (insert-file-contents mistkafka/git-project/cache-file-path)
+    (s-split "\n" (buffer-string) t)))
+
+(defun mistkafka/git-project/update-projects-cache ()
+  "更新projects的缓存"
+  (interactive)
+  (setq mistkafka/git-project/cache (mistkafka/git-project/do-update-projects-cache))
+  (message "更新成功！"))
+
+(defun mistkafka/git-project/do-update-projects-cache ()
+  "负责执行projects缓存的更新。将新结果写入缓存文件，并返回。"
+  (let* ((cmd-tpl "locate .git | grep '^/Users/mistkafka/Code/\\(%s\\).*\\.git$' ")
+	(locate-paths (s-join "\\|" mistkafka/git-project/locate-paths-of-code))
+	(cmd (format cmd-tpl locate-paths))
+	(result-str (shell-command-to-string cmd)))
+    (setq result-str (s-replace-regexp "/\\.git$" "" result-str))
+    (with-temp-file mistkafka/git-project/cache-file-path
+      (delete-region (point-min) (point-max))
+      (insert result-str)
+      (s-split "\n" result-str t))))
+
+(defun mistkafka/git-project/get-update-locate-db-cmd ()
+  "获取更新locate db的命令。
+由于更新locate db比较耗时，最好不要在emacs里处理。所以这里选择把命令复制到kill-ring里，然后复制到终端里运行"
+  (interactive)
+  (kill-new "sudo /usr/libexec/locate.updatedb --localpaths '/Users/mistkafka/Code'")
+  (message "更新命令已经复制到黏贴板中，在终端中运行更新命令！"))
+
+(defun mistkafka/git-project/switch-to-git-project (should-update-cache?)
+  (interactive "P")
+  (let (selected)
+    (when should-update-cache?
+      (mistkafka/git-project/update-projects-cache))
+    (unless mistkafka/git-project/cache
+      (setq mistkafka/git-project/cache (mistkafka/git-project/read-projects-cache)))
+    (setq selected (ivy-read "Switch to Project: " mistkafka/git-project/cache))
+    (when selected
+      (find-file selected)
+      (goto-char (point-min))
+      (mistkafka/git-project/find-file))
+    ))
+
 (mistkafka/keyboard/bind "pf" 'mistkafka/git-project/find-file)
 (mistkafka/keyboard/bind "pg" 'mistkafka/git-project/git-grep)
 (mistkafka/keyboard/bind "pG" 'mistkafka/git-project/reactive-git-grep)
-(mistkafka/keyboard/bind "ps" 'bookmark-jump)
-
-
+(mistkafka/keyboard/bind "ps" 'mistkafka/git-project/switch-to-git-project)
 
 (provide 'init-git-project)

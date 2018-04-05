@@ -29,6 +29,7 @@
 ;; layout管理器
 (require 'eyebrowse)
 (eyebrowse-mode t)
+(mistkafka/keyboard/bind "l" 'eyebrowse-switch-to-window-config)
 
 ;; flycheck语法检查器
 (require 'flycheck)
