@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t -*-
 
 (require-package 's)
+(require 'json-storage)
 
 (defun mistkafka/git-project/get-git-root-path (&optional current-path)
   "get the CURRENT-PATH's git root path"
@@ -100,23 +101,26 @@
 (defvar mistkafka/git-project/cache-file-path "/Users/mistkafka/.emacs.d/.cache/git-projects"
   "缓存文件的路径")
 
-(defvar mistkafka/git-project/cache nil
-  "projects的缓存")
+(defconst mistkafka/git-project/cache-storage (json-storage/create-storage mistkafka/git-project/cache-file-path))
 
 (defun mistkafka/git-project/read-projects-cache ()
   "从缓存文件中读取projects，并返回。"
-  (with-temp-buffer
-    (insert-file-contents mistkafka/git-project/cache-file-path)
-    (s-split "\n" (buffer-string) t)))
+  (json-storage/get-value mistkafka/git-project/cache-storage))
 
 (defun mistkafka/git-project/update-projects-cache ()
   "更新projects的缓存"
   (interactive)
-  (setq mistkafka/git-project/cache (mistkafka/git-project/do-update-projects-cache))
+  (let (
+	(projects (mistkafka/git-project/do-update-projects-cache))
+	(hash (make-hash-table :test 'equal))
+	)
+    (puthash "projects" projects hash)
+    (json-storage/update-value mistkafka/git-project/cache-storage hash)
+    )
   (message "更新成功！"))
 
 (defun mistkafka/git-project/do-update-projects-cache ()
-  "负责执行projects缓存的更新。将新结果写入缓存文件，并返回。"
+  "负责执行projects缓存的更新"
   (let* ((cmd-tpl "locate .git | grep '^/Users/mistkafka/Code/\\(%s\\).*\\.git$' ")
 	(locate-paths (s-join "\\|" mistkafka/git-project/locate-paths-of-code))
 	(cmd (format cmd-tpl locate-paths))
@@ -136,12 +140,16 @@
 
 (defun mistkafka/git-project/switch-to-git-project (should-update-cache?)
   (interactive "P")
-  (let (selected)
-    (when should-update-cache?
-      (mistkafka/git-project/update-projects-cache))
-    (unless mistkafka/git-project/cache
-      (setq mistkafka/git-project/cache (mistkafka/git-project/read-projects-cache)))
-    (setq selected (ivy-read "Switch to Project: " mistkafka/git-project/cache))
+  
+  (when should-update-cache?
+    (mistkafka/git-project/update-projects-cache))
+  
+  (let* (
+	 (cache-hash (json-storage/get-value mistkafka/git-project/cache-storage))
+	 (projects (gethash "projects" cache-hash))
+	 selected
+	 )
+    (setq selected (ivy-read "Switch to Project: " projects))
     (when selected
       (find-file selected)
       (goto-char (point-min))
