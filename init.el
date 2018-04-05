@@ -34,6 +34,7 @@
    command))
 
 ;; 加载配置
+(require 'init-exec-path)
 (require 'init-org)
 (require 'init-git-project)
 (require 'init-typescript)
