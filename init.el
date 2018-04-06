@@ -45,11 +45,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("c5d320f0b5b354b2be511882fc90def1d32ac5d38cccc8c68eab60a62d1621f2" "4e21fb654406f11ab2a628c47c1cbe53bab645d32f2c807ee2295436f09103c6" "891debfe489c769383717cc7d0020244a8d62ce6f076b2c42dd1465b7c94204d" default)))
  '(lsp-project-whitelist (quote ("^/Users/mistkafka/Code/gllue/web1/$")))
  '(org-agenda-files (quote ("~/gtd/index.org.gpg")))
  '(package-selected-packages
    (quote
-    (use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode))))
+    (doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
