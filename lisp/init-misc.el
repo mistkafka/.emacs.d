@@ -45,39 +45,45 @@
 (add-hook 'typescript-mode-hook 'flycheck-mode)
 (add-hook 'web-mode-hook 'flycheck-mode)
 
-(require-package 'lsp-javascript-typescript)
-(require 'lsp-typescript)
+;; (require-package 'lsp-javascript-typescript)
+;; (require 'lsp-typescript)
+;; (add-hook 'typescript-mode-hook #'lsp-typescript-enable) ;; for typescript support
+;; (add-hook 'js-mode-hook #'lsp-typescript-enable)
+;; (add-hook 'web-mode-hook #'lsp-typescript-enable) ;; *.tsx
+;; (add-hook 'js2-mode-hook #'lsp-typescript-enable) ;; for js2-mode support
+;; (add-hook 'rjsx-mode #'lsp-typescript-enable) ;; for rjsx-mode support
+(defconst
+  lsp-typescript--get-root
+  (lsp-make-traverser #'(lambda (dir)
+			  (directory-files dir nil "tsconfig.json\\|package.json")
+			  )
+		      ))
+(lsp-define-stdio-client
+ lsp-typescript
+ "javascript"
+ lsp-typescript--get-root
+ '("typescript-language-server" "--stdio"))
 (add-hook 'typescript-mode-hook #'lsp-typescript-enable) ;; for typescript support
-(add-hook 'js-mode-hook #'lsp-typescript-enable)
 (add-hook 'web-mode-hook #'lsp-typescript-enable) ;; *.tsx
-(add-hook 'js2-mode-hook #'lsp-typescript-enable) ;; for js2-mode support
-(add-hook 'rjsx-mode #'lsp-typescript-enable) ;; for rjsx-mode support
 
-;; (require-package 'lsp-python)
-(lsp-define-stdio-client lsp-python "python"
-			 (lsp-make-traverser #'(lambda (dir)
-						 (when (directory-files dir nil ".git") ;hardcode，只有项目root目录才可以是python root
-						   (directory-files
-						    dir
-						    nil
-						    "\\(__init__\\|setup\\)\\.py"))))
-			 '("/usr/local/bin/pyls"))
+(require-package 'lsp-python)
 (add-hook 'python-mode-hook #'lsp-python-enable)
 
-;; (require-package 'lsp-css)
-(defconst lsp-css--get-root
-  (lsp-make-traverser #'(lambda (dir)
-                          (directory-files dir nil "package.json"))))
+;; 因为有冲突，所以先注释 https://emacs-china.org/t/topic/5492/2
+;; ;; (require-package 'lsp-css)
+;; (defconst lsp-css--get-root
+;;   (lsp-make-traverser #'(lambda (dir)
+;;                           (directory-files dir nil "package.json"))))
 
-(lsp-define-stdio-client
- lsp-css
- "css"
- lsp-css--get-root
- '("css-languageserver" "--stdio"))
-(add-hook 'css-mode-hook #'lsp-css-enable)
-(add-hook 'less-mode-hook #'lsp-css-enable)
-(add-hook 'sass-mode-hook #'lsp-css-enable)
-(add-hook 'scss-mode-hook #'lsp-css-enable)
+;; (lsp-define-stdio-client
+;;  lsp-css
+;;  "css"
+;;  lsp-css--get-root
+;;  '("css-languageserver" "--stdio"))
+;; (add-hook 'css-mode-hook #'lsp-css-enable)
+;; (add-hook 'less-mode-hook #'lsp-css-enable)
+;; (add-hook 'sass-mode-hook #'lsp-css-enable)
+;; (add-hook 'scss-mode-hook #'lsp-css-enable)
 
 ;; 配置company，作为lsp的补全前端
 (require-package 'company)
@@ -95,24 +101,29 @@
 (require 'tramp-cache)
 (setq tramp-persistency-file-name "/Users/mistkafka/.emacs.d/.cache/tramp")
 
-(provide 'init-misc)
-
 ;; theme
 (require-package 'doom-themes)
-
-;; Global settings (defaults)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
-
-;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
-;; may have their own settings.
 (load-theme 'doom-one-light t)
-
-;; ;; Enable flashing mode-line on errors
-;; (doom-themes-visual-bell-config)
-
-;; ;; Enable custom neotree theme
-;; (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
-
-;; Corrects (and improves) org-mode's native fontification.
 (doom-themes-org-config)
+
+;; yasnippet配置
+(require-package 'yasnippet)
+(require 'yasnippet)
+(require 'yasnippet-snippets)
+(yas-global-mode 1)
+(yas-reload-all)
+;; (require 'company-yasnippet)
+;; (push 'company-yasnippet company-backends)
+
+
+;; auto-complate
+(require-package 'auto-complete)
+(ac-config-default)
+(setq-default ac-sources '(ac-source-abbrev
+                           ac-source-dictionary
+                           ac-source-words-in-same-mode-buffers
+			   ac-source-yasnippet))
+
+(provide 'init-misc)

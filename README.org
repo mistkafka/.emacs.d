@@ -8,7 +8,8 @@
   - State "DONE"       from "TODO"       [2018-04-01 Sun 04:17]
 * TODO 配置代码清理                                                  :config:
   - 按编程语言来划分配置
-* TODO 迁移yasnippet                                                 :config:
+* DONE 迁移yasnippet                                                 :config:
+  - State "DONE"       from "TODO"       [2018-04-07 Sat 17:14]
 * CANCELLED 学习emacs最原生的按键绑定 [[http://ergoemacs.org/emacs/emacs_kb_shortcuts.html][Link]]                            :learn:
   - State "CANCELLED"  from "TODO"       [2018-04-01 Sun 14:27] \\
     没什么价值

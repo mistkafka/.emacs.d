@@ -7,3 +7,6 @@ elpa
 eshell/history
 eshell/alias
 eshell/lastdir
+
+snippets
+ac-comphist.dat
