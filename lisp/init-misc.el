@@ -7,7 +7,11 @@
 
 ;; 默认启动ivy-mode
 (require-package 'ivy)
+(require-package 'counsel)
 (ivy-mode 1)
+(when (commandp 'counsel-M-x)
+  (global-set-key [remap execute-extended-command] #'counsel-M-x))
+
 
 ;; 默认启动which-key-mode
 (require-package 'which-key)
