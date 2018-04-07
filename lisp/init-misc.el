@@ -130,4 +130,8 @@
                            ac-source-words-in-same-mode-buffers
 			   ac-source-yasnippet))
 
+;; cnfonts
+(require-package'cnfonts)
+(cnfonts-enable)
+
 (provide 'init-misc)
