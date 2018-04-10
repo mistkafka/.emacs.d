@@ -23,3 +23,14 @@
   - [ ] 放置最近打开的git项目
   - [ ] 放置书签
 * TODO 让command的后面跟上所绑定的快捷键（像spacemacs那样）
+* TODO git grep优化
+  - grep 支持选择某些扩展名的文件
+  - grep 支持选择对那个路径进行grep
+  - grep 支持保存结果，方便进一步跳转
+
+* TODO helper buffer
+实现一种helper buffer的buffer，这些buffer是常驻的。用来处理不同的功能，例如：
+  - 展示grep 结果的buffer
+  - 展示find file结果的buffer
+
+这类buffer做成mini buffer，可以通过快捷键快速的“召唤”出来，并且还不会破坏buffer布局。
