@@ -4,6 +4,8 @@
 (require 'json-storage)
 (require 'seq)
 
+(require 'mistkafka-file)
+
 (defun mistkafka/git-project/get-git-root-path (&optional current-path)
   "get the CURRENT-PATH's git root path"
   (interactive)
@@ -66,15 +68,9 @@
     )
   )
 
-(defun mistkafka/git-project/get-file-name ()
-  (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
-    filename))
-
 (defun mistkafka/git-project/get-file-name-in-project ()
   "Get current buffer file name in the current git project"
-  (let* ((filename (mistkafka/git-project/get-file-name))
+  (let* ((filename (mistkafka/file/safe-get-file-name))
          (project-path (expand-file-name (mistkafka/git-project-get-git-root-path filename))))
     (setq filename (replace-regexp-in-string project-path "/" filename))))
 
@@ -88,7 +84,7 @@
   "Copy the current buffer file name to the clipboard."
   (interactive)
   (mistkafka/git-project/copy-file-name-to-clipboard 
-   (mistkafka/git-project/get-file-name)))
+   (mistkafka/file/safe-get-file-name)))
 
 (defun mistkafka/git-project/copy-file-name-in-project-to-clipboard ()
   "Copy the current buffer file name in the current git project to the clipboard"
