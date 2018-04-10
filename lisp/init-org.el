@@ -38,11 +38,24 @@
     (org-remove-file))
   )
 
+(defun mistkafka/org-indent-current-buffer ()
+  (interactive)
+  (org-indent-region (point-min) (point-max)))
+
+(defun mistkafka/org-setup-hook ()
+  (add-hook 'org-mode-hook
+	    (lambda ()
+	      (add-hook 'before-save-hook 'mistkafka/org-indent-current-buffer nil 'make-it-local))
+	    )
+  )
+
 (with-eval-after-load 'org
   (progn
     (mistkafka/org-setup-todo-keywords)
     (mistkafka/org-setup-archive)
+    (mistkafka/org-setup-hook)
     (mistkafka/org-setup-org-crypt)
-    (mistkafka/org-defun-alias-funs)))
+    (mistkafka/org-defun-alias-funs)
+    ))
 
 (provide 'init-org)
