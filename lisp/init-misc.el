@@ -134,4 +134,17 @@
 (require-package'cnfonts)
 (cnfonts-enable)
 
+;; js-doc
+(setq js-doc-mail-address "zhenguolin@me.com"
+      js-doc-author (format "MistKafka <%s>" js-doc-mail-address)
+      js-doc-url "https://mistkafka.github.io"
+      js-doc-license "MIT")
+
+(add-hook 'typescript-mode-hook
+          #'(lambda ()
+              (define-key typescript-mode-map "\C-ci" 'js-doc-insert-function-doc)
+              (define-key typescript-mode-map "@" 'js-doc-insert-tag)))
+
+;; rename current file and buffer
+
 (provide 'init-misc)
