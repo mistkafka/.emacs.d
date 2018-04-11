@@ -33,10 +33,10 @@
        "\n"
        t))))
 
-(defun mistkafka/git-project/reactive-git-grep ()
+(defun mistkafka/git-project/reactive-git-grep (is-in-current-directory?)
   "实时输入pattern进行git grep。适用于小项目。"
-  (interactive)
-  (let* ((default-directory (mistkafka/git-project/get-git-root-path))
+  (interactive "P")
+  (let* ((default-directory (mistkafka/git-project/determine-git-grep-path is-in-current-directory?))
 	 (collect-fn (mistkafka/git-project/get-do-git-grep-function default-directory))
 	 (seleted (ivy-read "pattern: " collect-fn))
 	 lst)
@@ -49,10 +49,11 @@
     )
   )
 
-(defun mistkafka/git-project/git-grep ()
+
+(defun mistkafka/git-project/git-grep (is-in-current-directory?)
   "输入一段pattern，然后进行git grep。适用于大项目。"
-  (interactive)
-  (let* ((default-directory (mistkafka/git-project/get-git-root-path))
+  (interactive "P")
+  (let* ((default-directory (mistkafka/git-project/determine-git-grep-path is-in-current-directory?))
 	 (keyword (ivy-read "keyword: " nil))
 	 (cmd (format "git --no-pager grep --full-name -n --no-color -i -e \"%s\"" keyword))
 	 (result-str (shell-command-to-string cmd))
@@ -67,6 +68,13 @@
       )
     )
   )
+
+(defun mistkafka/git-project/determine-git-grep-path (is-in-current-directory?)
+  "git grep 的辅助函数。如果`IS-IN-CURRENT-DIRECTORY?'不为nil，则返回当前文件所在的文件夹。
+否则，返回当前git项目的根目录。"
+  (if is-in-current-directory?
+      default-directory
+    (mistkafka/git-project/get-git-root-path)))
 
 (defun mistkafka/git-project/get-file-name-in-project ()
   "Get current buffer file name in the current git project"
