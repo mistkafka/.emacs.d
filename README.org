@@ -17,7 +17,8 @@
 * TODO layout管理优化
   - [ ] layout带有命名，使之方便识别切换
   - [ ] 切换layout支持首字母快捷切换
-* TODO 迁移在spacemacs里写的自定义command                            :config:
+* DONE 迁移在spacemacs里写的自定义command                            :config:
+  - State "DONE"       from "TODO"       [2018-04-12 Thu 21:59]
 * TODO 启动页面配置
   - [ ] 放置最近修改的文件
   - [ ] 放置最近打开的git项目
@@ -29,8 +30,10 @@
   - grep 支持保存结果，方便进一步跳转
 
 * TODO helper buffer
-实现一种helper buffer的buffer，这些buffer是常驻的。用来处理不同的功能，例如：
+  实现一种helper buffer的buffer，这些buffer是常驻的。用来处理不同的功能，例如：
   - 展示grep 结果的buffer
   - 展示find file结果的buffer
 
-这类buffer做成mini buffer，可以通过快捷键快速的“召唤”出来，并且还不会破坏buffer布局。
+  这类buffer做成mini buffer，可以通过快捷键快速的“召唤”出来，并且还不会破坏buffer布局。
+* TODO lisp.el按键绑定
+  突然发现lisp.el里有一些lisp相关的command，例如： =forward-sexp= 之类的。探索探索，然后绑定到lisp的mode下
