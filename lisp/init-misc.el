@@ -156,6 +156,36 @@
               (define-key typescript-mode-map "\C-ci" 'js-doc-insert-function-doc)
               (define-key typescript-mode-map "@" 'js-doc-insert-tag)))
 
-;; rename current file and buffer
+;; Apple
+(defun mistkafka/osx/speech ()
+  "Speech region content.
+Or word at point.
+Or prompt user input."
+  (interactive)
+  (let ((content))
+    (cond ((region-active-p) (setq content (buffer-substring-no-properties
+					    (region-beginning)
+					    (region-end))))
+          ((word-at-point) (setq content (word-at-point)))
+          (t (setq content (ivy-read "Speech Content: " nil))))
+
+    (call-process "osascript"
+                  nil 0 nil
+                  "-e" (format "say \"%s\"" content))))
+
+;; git emoji
+(require 'misc-config)
+(defun mistkafka/counsel-git-emoji ()
+  "search and insert gitmoji"
+  (interactive)
+  (let (emoji-selected-raw-str
+        emoji)
+    (setq emoji-selected-raw-str (ivy-read "%d search gitmoji: " MISTKAFKA-GITMOJIS))
+    (setq emoji (nth 1 (s-match "^\\(:[a-zA-Z_]*:\\) .*" emoji-selected-raw-str)))
+    (insert emoji)
+    ))
+
+;; no tab
+(setq indent-tabs-mode nil)
 
 (provide 'init-misc)
