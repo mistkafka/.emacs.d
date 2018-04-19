@@ -79,7 +79,7 @@
 (defun mistkafka/git-project/get-file-name-in-project ()
   "Get current buffer file name in the current git project"
   (let* ((filename (mistkafka/file/safe-get-file-name))
-         (project-path (expand-file-name (mistkafka/git-project-get-git-root-path filename))))
+         (project-path (expand-file-name (mistkafka/git-project/get-git-root-path))))
     (setq filename (replace-regexp-in-string project-path "/" filename))))
 
 (defun mistkafka/git-project/copy-file-name-to-clipboard (filename)
