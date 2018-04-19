@@ -49,6 +49,25 @@
 	    )
   )
 
+(setq org-emphasis-regexp-components
+      ;; markup 记号前后允许中文，必须在org load之前执行。因为org里的defvar不用覆盖已有的值
+      ;; 并且org在初始化的时候，就需要这个值了
+      (list (concat " \t('\"{"            "[:nonascii:]")
+            (concat "- \t.,:!?;'\")}\\["  "[:nonascii:]")
+            " \t\r\n,\"'"
+            "."
+            1))
+(defun mistkafka/org-setup-markup ()
+  (setq org-match-substring-regexp
+        (concat
+         ;; 限制上标和下标的匹配范围，org 中对其的介绍见：(org) Subscripts and superscripts
+         "\\([0-9a-zA-Zα-γΑ-Ω]\\)\\([_^]\\)\\("
+         "\\(?:" (org-create-multibrace-regexp "{" "}" org-match-sexp-depth) "\\)"
+         "\\|"
+         "\\(?:" (org-create-multibrace-regexp "(" ")" org-match-sexp-depth) "\\)"
+         "\\|"
+         "\\(?:\\*\\|[+-]?[[:alnum:].,\\]*[[:alnum:]]\\)\\)")))
+
 (with-eval-after-load 'org
   (progn
     (mistkafka/org-setup-todo-keywords)
@@ -56,6 +75,7 @@
     (mistkafka/org-setup-hook)
     (mistkafka/org-setup-org-crypt)
     (mistkafka/org-defun-alias-funs)
+    (mistkafka/org-setup-markup)
     ))
 
 (provide 'init-org)
