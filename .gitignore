@@ -11,6 +11,7 @@ eshell/lastdir
 snippets
 ac-comphist.dat
 lisp/gll-config.el
+lisp/habitica-config.el
 
 url
 request

@@ -41,6 +41,7 @@
 (require 'init-misc)
 (require 'mistkafka-file)
 (require 'init-gll)
+(require 'mistkafka-habitica)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -54,7 +55,7 @@
  '(org-agenda-files (quote ("~/gtd/index.org.gpg")))
  '(package-selected-packages
    (quote
-    (async-await org-trello habitica js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode))))
+    (js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -63,3 +64,4 @@
  )
 (put 'upcase-region 'disabled nil)
 (put 'set-goal-column 'disabled nil)
+(put 'downcase-region 'disabled nil)
