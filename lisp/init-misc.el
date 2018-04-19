@@ -186,6 +186,6 @@ Or prompt user input."
     ))
 
 ;; no tab
-(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 
 (provide 'init-misc)
