@@ -32,6 +32,7 @@
     - [ ] 任务状态为Cancel、+移除todo关键字时+，则删除
     - [ ] 可以同步当前的任务（为TODO/NEXT时才同步）到habitica上
   - [ ] validate：对CRUD进行合法性验证
+  - [ ] 检查“建议填写”项，如果没有填写，询问是否需要填写。免得创建的任务需要修改。
   - [ ] 任务的check list同步
   - [ ] Project类型的任务同步成一个带有check list的任务
   - [ ] 支持Habit类型的任务

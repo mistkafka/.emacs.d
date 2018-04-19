@@ -29,7 +29,7 @@
     ;; (message (format "*curl-request*, running request: %s" cmd))
     (setq result
           (shell-command-to-string cmd))
-    ;; (message (format "*curl-request*, with result: %s" result))
+    (message (format "*curl-request*, with result: %s" result))
     result
     ))
 
@@ -52,6 +52,12 @@ data是http请求的body，会被转成JSON。在habitica下，传数据都用js
     (when data
       (setq data (json-encode data))
       (setq req-opts (append req-opts `(("data" . ,data)))))
+
+    ;; curl 如果使用POST，但是又没有data会报错，所以提供一个空数据
+    (when (and (string= "POST" method) (not data))
+      (setq data "{}")
+      (setq req-opts (append req-opts `(("data" . ,data)))))
+    
     (json-read-from-string
      (my/curl-request url req-opts))
     ))
@@ -246,7 +252,7 @@ everyX指的是频率"
 
 (defun mistkafka/habitica/cron ()
   (interactive)
-  (mistkafka/habitica/request "/cron" "POST" ""))
+  (mistkafka/habitica/request "/cron" "POST" nil))
 
 (add-hook 'org-after-todo-state-change-hook 'mistkafka/habitica/headline-state-change-callback)
 
