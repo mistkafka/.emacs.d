@@ -52,12 +52,14 @@ data是http请求的body，会被转成JSON。在habitica下，传数据都用js
 
     (when data
       (setq data (json-encode data))
-      (setq req-opts (append req-opts `(("data" . ,data)))))
+      (with-temp-file "/tmp/org-mistkafka-habitica-req.json"
+        (delete-region (point-min) (point-max))
+        (insert data))
+      (setq req-opts (append req-opts '(("data" . "@/tmp/org-mistkafka-habitica-req.json")))))
 
     ;; curl 如果使用POST，但是又没有data会报错，所以提供一个空数据
     (when (and (string= "POST" method) (not data))
-      (setq data "{}")
-      (setq req-opts (append req-opts `(("data" . ,data)))))
+      (setq req-opts (append req-opts '(("data" . "{}")))))
     
     (json-read-from-string
      (my/curl-request url req-opts))
