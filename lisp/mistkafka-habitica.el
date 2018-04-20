@@ -3,6 +3,7 @@
 (require 'json)
 (require 'org)
 (require 's)
+(require 'dash)
 
 ;; 暂时将uid, key存在这里面
 (require 'habitica-config)
@@ -119,6 +120,25 @@ everyX指的是频率"
   "获取当前headline的habitica-id"
   (org-entry-get (point) "HABITICATE-ID" nil t))
 
+(setq difficulty-org-2-habitica-table (make-hash-table :test 'equal))
+(puthash "Trivial" 0.5 difficulty-org-2-habitica-table)
+(puthash "Easy"    1   difficulty-org-2-habitica-table)
+(puthash "Medium"  1.5 difficulty-org-2-habitica-table)
+(puthash "Hard"    2   difficulty-org-2-habitica-table)
+(defun my/get-current-headling-habitica-priority ()
+  "获取当前headline的priority"
+  (let ((tags (nth 5 (org-heading-components))))
+    (if tags
+        (let ((difficulty nil))
+          (setq difficulty (->> (s-split ":" tags)
+                                (mapcar
+                                 (lambda (tag) (gethash tag difficulty-org-2-habitica-table 0)))
+                                (seq-max)))
+          (when (= 0 difficulty)
+            (setq difficulty 1))
+          (number-to-string difficulty))
+      "1")))
+
 (defun mistkafka/habitica/get-current-headline-info ()
   "收集当前headline的信息，等待进一步处理。"
   (let ((headline-info (make-hash-table :test 'equal))
@@ -137,6 +157,9 @@ everyX指的是频率"
              headline-info)
     (puthash "habitica-id"
              (my/get-current-headline-habitica-id)
+             headline-info)
+    (puthash "habitica-priority"
+             (my/get-current-headling-habitica-priority)
              headline-info)
     (puthash "deadline-time"
              (my/get-current-headline-deadline-time)
@@ -168,6 +191,10 @@ everyX指的是频率"
     ;; option fields
     (puthash "notes"
              (gethash "content" headline-info)
+             task-info)
+
+    (puthash "priority"
+             (gethash "habitica-priority" headline-info "1")
              task-info)
     
     (when deadline-time
@@ -208,8 +235,11 @@ everyX指的是频率"
   (if (and (string= "TODO" (gethash "todo-keyword" headline-info))
            (not (gethash "habitica-id" headline-info)))
       (let* ((res (mistkafka/habitica/create-task headline-info))
-             (id (alist-get 'id (alist-get 'data res))))
+             (res-data (alist-get 'data res))
+             (id   (alist-get 'id res-data))
+             (type (alist-get 'type res-data)))
         (org-set-property "HABITICA-ID" id)
+        (org-set-property "HABITICA-TYPE" type)
         (message "Success: 关联habitica任务！"))
     (unless silence-error
       (message "Skip: 任务不处于'TODO'状态，或已经关联了habitica!"))))

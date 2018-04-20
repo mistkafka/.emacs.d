@@ -6,7 +6,7 @@
   - [ ] 增加一个顶级headline——Habits，对应Habitica上的habit类型的任务
   - [ ] 对于设置了周期的任务，自动划为daily类型的任务
   - [ ] 进入Someday、Cancel的任务自动从Habitica上删除
-  - [ ] 需要同步的字段:
+  - [X] 需要同步的字段:
     |---------------+------------+----------------------+----------------------|
     | <13>          | <10>       | <20>                 | <20>                 |
     | org-mode      | habitica   | note                 | process              |
@@ -23,15 +23,17 @@
   - 除了Project，TODO任务不能有嵌套。Project也只允许两层的嵌套，即第一层是Project本身，而第二层是Project的TODO
   - =org-log-into-drawer= 要为t，所有的log都放入drawer中。即美观，也方便解析
   - 每个headline的内容结构只有两种：check-list跟非check-list，没个headline最多只能有一个check-list，并且只能放在末尾。不然很难解析。
+  - 用这一组tag来对应habitica的难度: =Trivial Easy Medium Hard=
+    
 
 * Planning
   由于多端编辑的复杂性，初步我们不考虑多端编辑。一切的修改，只允许在org-mode中进行，而habitica只是用来查阅。
   - [-] 任务的增、删、改
     - [X] 任务状态变为TODO时，且没有habitica-id，则新增
     - [X] 任务状态变为Done时，则标记为Done
-    - [ ] 任务状态为Cancel、+移除todo关键字时+，则删除
+    - [X] 任务状态为Cancel、+移除todo关键字时+，则删除
     - [ ] 可以同步当前的任务（为TODO/NEXT时才同步）到habitica上
-  - [ ] validate：对CRUD进行合法性验证
+  - [X] validate：对CRUD进行合法性验证
   - [ ] 检查“建议填写”项，如果没有填写，询问是否需要填写。免得创建的任务需要修改。
   - [ ] 任务的check list同步
   - [ ] Project类型的任务同步成一个带有check list的任务
