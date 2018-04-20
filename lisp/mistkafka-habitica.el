@@ -195,59 +195,67 @@ everyX指的是频率"
   (let ((url (format "/tasks/%s" task-id)))
     (mistkafka/habitica/request url "DELETE")))
 
-(defun mistkafka/habitica/create-habitica-task-for-current-headline (headline-info)
+(defun mistkafka/habitica/create-task (headline-info)
+  (let* ((task-info (mistkafka/habitica/cover-headline-info-2-habitica-task headline-info))
+         (response (mistkafka/habitica/request "/tasks/user" "POST" task-info)))
+    response))
+
+(defun mistkafka/habitica/create-habitica-task-for-current-headline (&optional headline-info silence-error)
   "为当前任务创建一个habitica任务"
+  (interactive)
+  (unless headline-info
+    (setq headline-info (mistkafka/habitica/get-current-headline-info)))
+  (if (and (string= "TODO" (gethash "todo-keyword" headline-info))
+           (not (gethash "habitica-id" headline-info)))
+      (let* ((res (mistkafka/habitica/create-task headline-info))
+             (id (alist-get 'id (alist-get 'data res))))
+        (org-set-property "HABITICA-ID" id)
+        (message "Success: 关联habitica任务！"))
+    (unless silence-error
+      (message "Skip: 任务不处于'TODO'状态，或已经关联了habitica!"))))
+
+(defun mistkafka/habitica/make-habitica-task-done-for-current-headline (&optional headline-info silence-error)
+  "将当前headline的标记为完成一次。"
   
   (interactive)
-  (let* ((task-info (mistkafka/habitica/cover-headline-info-2-habitica-task headline-info))
-         (response (mistkafka/habitica/request "/tasks/user" "POST" task-info))
-         (id (alist-get 'id (alist-get 'data response))))
-    (org-set-property "HABITICATE-ID" id)
-    ))
-
-(defun mistkafka/habitica/make-habitica-task-done-for-current-headline (headline-info)
-  "将当前headline的标记为完成一次。"
-  (interactive)
+  
   (unless headline-info
     (setq headline-info (mistkafka/habitica/get-current-headline-info)))
-  (mistkafka/habitica/make-task-done (gethash "habitica-id" headline-info)))
+  
+  (if (and (or (string= "DONE" (gethash "todo-keyword" headline-info))
+               (string= "NEXT" (gethash "todo-keyword" headline-info)))
+           (gethash "habitica-id" headline-info))
+      (progn
+        (mistkafka/habitica/make-task-done (gethash "habitica-id" headline-info))
+        (message "Success: 对应habitica任务 Up Score!"))
+    (unless silence-error
+      (message "Skip: 任务不处于'DONE'状态，或未关联habitica!"))))
 
-(defun mistkafka/habitica/del-habitica-task-for-current-headline (headline-info)
+(defun mistkafka/habitica/del-habitica-task-for-current-headline (&optional headline-info silence-error)
   "将当前headline对应的habitica task删除。"
+  
   (interactive)
+  
   (unless headline-info
     (setq headline-info (mistkafka/habitica/get-current-headline-info)))
-  (mistkafka/habitica/del-task (gethash "habitica-id" headline-info))
-  (org-delete-property "HABITICATE-ID"))
+  
+  (if (and (string= "CANCELLED" (gethash "todo-keyword" headline-info))
+           (gethash "habitica-id" headline-info))
+      (progn
+        (mistkafka/habitica/del-task (gethash "habitica-id" headline-info))
+        (org-delete-property "HABITICATE-ID")
+        (message "Success: 成功删除habitica任务！")
+        )
+    (unless silence-error
+      (message "Skip: 任务不处于'CANCELLED'状态，或没有关联habitica!"))))
 
 (defun mistkafka/habitica/headline-state-change-callback ()
-  "org-after-todo-state-change-hook的callback，用来处理任务的增删改。"
-  (let* ((headline-info (mistkafka/habitica/get-current-headline-info))
-         (habitica-id   (gethash "habitica-id" headline-info))
-         (todo-keyword  (gethash "todo-keyword" headline-info)))
-    (cond
-
-     ;; 没有todo keyword什么都不做
-     ((not todo-keyword)
-      nil)
-
-     ;; 状态为CANCELLED，且带有id，则需要同步删除habitica上的task
-     ((and (string= "CANCELLED" todo-keyword) habitica-id)
-      (mistkafka/habitica/del-habitica-task-for-current-headline headline-info))
-     
-     ;; 状态为TODO，且没有id，说明需要新增task
-     ((and (string= "TODO" todo-keyword) (not habitica-id))
-      (mistkafka/habitica/create-habitica-task-for-current-headline headline-info))
-
-     ;; 状态为DONE，且有id，则需要把task标记为完成
-     ((and (string= "DONE" todo-keyword) habitica-id)
-      (mistkafka/habitica/make-habitica-task-done-for-current-headline headline-info))
-
-     ;; 状态为NEXT，且带有id，则标记一次完成
-     ((and (string= "NEXT" todo-keyword) habitica-id)
-      ;; daily类型的任务可能没有这么简单，需要限制是 标记完成 *哪一天* 的任务
-      (mistkafka/habitica/make-habitica-task-done-for-current-headline headline-info))
-     )
+  "org-after-todo-state-change-hook的callback，用来处理任务的增删改。
+依次执行CRUD对应的command. 每个command内部会做validate，判断是否需要执行。"
+  (let ((headline-info (mistkafka/habitica/get-current-headline-info)))
+    (mistkafka/habitica/del-habitica-task-for-current-headline       headline-info t)
+    (mistkafka/habitica/create-habitica-task-for-current-headline    headline-info t)
+    (mistkafka/habitica/make-habitica-task-done-for-current-headline headline-info t)
     ))
 
 (defun mistkafka/habitica/cron ()
