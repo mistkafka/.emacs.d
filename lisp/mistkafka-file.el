@@ -44,8 +44,8 @@ If there is not buffer-file, return nil"
 			     :initial-input old-name))
     (save-buffer)
     (copy-file old-name new-name)
+    (mistkafka/file/do-delete-current)
     (find-file new-name)
-    (kill-buffer old-buffer)
     (goto-char old-point)
     (message "重命名成功！")))
 
