@@ -415,7 +415,7 @@ everyX指的是频率"
                (setq is-type-changed (not (string= (gethash "type" local-task)
                                                    (alist-get 'type task))))
                (setq is-local-status-done-and-remote-todo (and (string= "DONE" (gethash "todo-keyword" headline-info))
-                                                               (not (alist-get 'completed task))))
+                                                               (not (equal t (alist-get 'completed task)))))
                (cond
                 ;; task 类型变更了，则删除task，重新创建
                 ((and is-type-changed (not is-challenge-task)) (progn
@@ -426,7 +426,7 @@ everyX指的是频率"
                 ;; 本地任务已经完成，则把habitica的任务也完成
                 (is-local-status-done-and-remote-todo (progn
                                                         (message (format "任务：%s, 已经完成！正在将它标记为完成..." task-id))
-                                                        (mistkafka/habitica/make-task-done (alist-get 'id task))))
+                                                        (mistkafka/habitica/make-task-done task-id)))
 
                 ;; 对于chanllenge任务，不能进行除“完成”以外的操作
                 (is-challenge-task (message "任务：%s，是“挑战”任务，无法进行内容修改，跳过！" task-id))
@@ -434,10 +434,10 @@ everyX指的是频率"
                 ;; task类型、完成状态都没有变，但是其它字段有变更，则进行数据更新
                 ((and (mistkafka/habitica/is-different-between-headline-and-task local-task task)
                       (not is-challenge-task))  (progn
-                                                                                                (message (format "任务：%s，有字段变更！正在进行同步..." task-id))
-                                                                                                (remhash "type" local-task)
-                                                                                                (mistkafka/habitica/request (format "/tasks/%s" task-id)
-                                                                                                                            "PUT" local-task)))))
+                                                  (message (format "任务：%s，有字段变更！正在进行同步..." task-id))
+                                                  (remhash "type" local-task)
+                                                  (mistkafka/habitica/request (format "/tasks/%s" task-id)
+                                                                              "PUT" local-task)))))
            ;; 完全是新的task，则新增一个headline
            (progn
              (when (not (string= "habit" (alist-get 'type task)))
