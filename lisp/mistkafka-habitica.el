@@ -449,23 +449,31 @@ everyX指的是频率"
     (message "根据habitica的数据同步task完成！")))
 
 (defvar mistkafka/habitica/headline-queue-for-new-task nil)
+(defvar mistkakfa/habitica/headline-collect-task-flags '("IS-INBOX-HEADLINE" "IS-SIMPLE-ACTION" "IS-PROJECTS"))
 (defun mistkafka/habitica/sync-to-habitica--depend-on-headlines ()
   "   从org往habitica同步
       1. 扫描所有的headline
       2. 只捕获类型为TODO/NEXT，且没有habitica-id的任务
       3. 往habitica上新增一个任务"
   (setq mistkafka/habitica/headline-queue-for-new-task nil)
-  (org-map-tree 'mistkafka/habitica/collect-should-new-tasks)
+  (mapc
+   (lambda (flag)
+     (let ((root-tree-pos (org-find-property flag)))
+       (when root-tree-pos
+         (goto-char root-tree-pos)
+         (org-map-tree 'mistkafka/habitica/collect-should-new-tasks))
+       ))
+   mistkakfa/habitica/headline-collect-task-flags)
   (mistkafka/habitica/create-habitica-task-from-queue)
   (message "根据headline的数据同步task完成！"))
 
 (defun mistkafka/habitica/collect-should-new-tasks ()
   (let* ((headline-info (mistkafka/habitica/get-current-headline-info))
-         (habitica-id (gethash 'habitica-id headline-info))
-         (todo-keyword (gethash 'todo-keyword headline-info)))
+         (habitica-id (gethash "habitica-id" headline-info))
+         (todo-keyword (gethash "todo-keyword" headline-info)))
     (when (and (seq-contains '("TODO" "NEXT") todo-keyword 'equal)
                (or (not habitica-id) (s-starts-with? "tmp-uuid" habitica-id)))
-      (setq habitica-id (mistkafka/habitica/gen-headline-tmp-uuid headline-title))
+      (setq habitica-id (mistkafka/habitica/gen-headline-tmp-uuid (gethash "title" headline-info)))
       (org-set-property "HABITICA-ID" habitica-id)
       (puthash 'habitica-id habitica-id headline-info)
       (setq mistkafka/habitica/headline-queue-for-new-task

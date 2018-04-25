@@ -24,7 +24,8 @@
   - =org-log-into-drawer= 要为t，所有的log都放入drawer中。即美观，也方便解析
   - 每个headline的内容结构只有两种：check-list跟非check-list，没个headline最多只能有一个check-list，并且只能放在末尾。不然很难解析。
   - 用这一组tag来对应habitica的难度: =Trivial Easy Medium Hard=
-  - 需要用一个属性来标记哪个HEADLINE是 *Inbox* 
+  - 需要用一个属性来标记哪个HEADLINE是 *Inbox*
+  - 需要一个属性来标记哪个HEADLINE是 *Simple Action*、*Projects*
     
 
 * Planning
