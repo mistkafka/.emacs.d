@@ -188,4 +188,9 @@ Or prompt user input."
 ;; no tab
 (setq-default indent-tabs-mode nil)
 
+;; 移除magit的"M-n"绑定，这是我的 leader-key
+(add-hook 'magit-mode-hook
+          (lambda ()
+            (local-set-key (kbd "M-n") nil)))
+
 (provide 'init-misc)
