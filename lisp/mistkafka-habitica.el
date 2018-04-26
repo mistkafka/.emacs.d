@@ -85,7 +85,58 @@ data是http请求的body，会被转成JSON。在habitica下，传数据都用js
     (setq content (substring               content 0 (s-index-of "\n*" content)))
     (setq content (s-replace-regexp my/org-property-drawer-re "" content))
     (setq content (s-replace-regexp my/org-logbook-drawer-re  "" content))
-    content))
+
+    ;; 在temp buffer里把剩余的content给format一下，方便后续处理
+    (with-temp-buffer
+      (insert "* a-headline\n")
+      (insert content)
+      (org-mode)
+      (org-indent-region (point-min) (point-max))
+      (buffer-substring-no-properties 13 (point-max)))))
+
+(defun my/extract-checkboxs-list (headline-content)
+  "从HEADLINE-CONTENT中提取出checkboxs.
+返回一个hash-table，带有两个key：
+  - content :: 除去checkboxs后剩余的content
+  - checkboxs :: 顶级的checkboxs list，每个list的item的结构是：'(是否完成 content)"
+  (let* ((all-list-items (s-match-strings-all "^\s*-\s\\[[\sX]\\]\s.*$" headline-content))
+         (top-level-items (cl-loop for x on all-list-items
+                                   for item = (car (car x))
+                                   when (s-starts-with? "  -" item)
+                                   collect item))
+         (result (make-hash-table :test 'equal)))
+    (mapc
+     (lambda (x)
+       (setq headline-content (s-replace (car x) "" headline-content)))
+     all-list-items)
+    (setq headline-content (s-trim headline-content))
+    (puthash "content" headline-content result)
+
+    (setq top-level-items
+          (mapcar
+           (lambda (x)
+             (setq x (s-trim x))
+             (if (s-starts-with? "- [X] " x)
+                 `(t ,(substring-no-properties x 6))
+               `(nil ,(substring-no-properties x 6))))
+           top-level-items))
+    (puthash "checkboxs" top-level-items result)
+    
+    result))
+
+(defun my/parse-current-headline-content ()
+  "解析当前的headline
+返回一个hash-table，带有两个key：
+  - content :: 除去checkboxs、properties、title、deadline-time、子节点后剩余的content
+  - checkboxs :: 顶级的checkboxs list，每个list的item的结构是：'(是否完成 content)"
+  (let ((context (my/extract-checkboxs-list (my/get-current-headline-content)))
+        (content-without-time nil))
+    (setq content-without-time (->> (gethash "content" context)
+                                    (s-replace-regexp ".*DEADLINE: \<.*>"  "")
+                                    (s-replace-regexp ".*SCHEDULED: \<.*>" "")
+                                    (s-trim)))
+    (puthash "content" content-without-time context)
+    context))
 
 (defun my/get-current-headline-deadline-time ()
   "尝试获取当前headline的deadline时间。如果有返还字符串时间，如果没有返回nil"
@@ -150,12 +201,16 @@ everyX指的是频率"
 (defun mistkafka/habitica/get-current-headline-info ()
   "收集当前headline的信息，等待进一步处理。"
   (let ((headline-info (make-hash-table :test 'equal))
-        (heading-components     (org-heading-components)))
+        (heading-components     (org-heading-components))
+        (heading-parsed-content (my/parse-current-headline-content)))
     (puthash "title"
              (nth 4 heading-components)
              headline-info)
     (puthash "content"
-             (my/get-current-headline-content)
+             (gethash "content" heading-parsed-content)
+             headline-info)
+    (puthash "checkboxs"
+             (gethash "checkboxs" heading-parsed-content)
              headline-info)
     (puthash "todo-keyword"
              (nth 2 heading-components)
@@ -248,6 +303,7 @@ everyX指的是频率"
              (type (alist-get 'type res-data)))
         (org-set-property "HABITICA-ID" id)
         (org-set-property "HABITICA-TYPE" type)
+        (mistkafka/habitica/sync-checklist res-data headline-info)
         (message "Success: 关联habitica任务！"))
     (unless silence-error
       (message "Skip: 任务不处于'TODO'状态，或已经关联了habitica!"))))
@@ -316,7 +372,7 @@ everyX指的是频率"
       (insert (format ":%s:" (gethash (alist-get 'priority task) difficulty-org-2-habitica-table))) ; headline tag
 
       (insert (format "\n\n %s" (alist-get 'notes task ""))) ; headline content
-      (when (string= "daily" type)
+      (when (alist-get 'checklist task)
         (insert "\n\n")
         (mapc
          (lambda (checkitem)
@@ -359,12 +415,14 @@ everyX指的是频率"
 
 (defun mistkafka/habitica/cover-time-to-string (the-date)
   (when the-date
-    (format-time-string "%Y-%m-%d %H:%M:%S" (date-to-time the-date) t)
+    (if (equal 19 (length the-date))              ; 愚蠢的habitica返回，时间格式不一致
+        the-date
+      (format-time-string "%Y-%m-%d %H:%M:%S" (date-to-time the-date) t))
     ))
 
 (defun mistkafka/habitica/is-the-same-between-headline-and-task (local-task remote-task)
-  (and (string= (gethash "title" local-task)
-                (alist-get 'title remote-task))
+  (and (string= (gethash "text" local-task)
+                (alist-get 'text remote-task))
        
        (string= (gethash "notes" local-task)
                 (alist-get 'notes remote-task))
@@ -437,7 +495,9 @@ everyX指的是频率"
                                                   (message (format "任务：%s，有字段变更！正在进行同步..." task-id))
                                                   (remhash "type" local-task)
                                                   (mistkafka/habitica/request (format "/tasks/%s" task-id)
-                                                                              "PUT" local-task)))))
+                                                                              "PUT" local-task)
+                                                  (mistkafka/habitica/sync-checklist task headline-info))))
+               )
            ;; 完全是新的task，则新增一个headline
            (progn
              (when (not (string= "habit" (alist-get 'type task)))
@@ -447,6 +507,45 @@ everyX指的是频率"
          ))
      tasks)
     (message "根据habitica的数据同步task完成！")))
+
+(defun mistkafka/habitica/sync-checklist (task headline-info)
+  "同步一个已经创建的task的checklist。按顺序遍历线上的checklist与headline里的checkboxs，
+遍历的次数取两个列表中最长的长度，针对每一次遍历：
+1. 线上不存在，本地存在：则根据本地新建
+2. 线上存在，本地不存在：则删除线上的
+3. 线上存在、本地存在：则对比文本，如果文本有出入，根据本地的文本更新线上的check item
+4. 线上本地都不存在：则什么都不用做"
+  (let* ((remote-checklist (append (alist-get 'checklist task)  nil))
+         (local-checkboxs (gethash "checkboxs" headline-info))
+         (traverse-length (max (length remote-checklist)
+                               (length local-checkboxs)))
+         (task-id (alist-get 'id task))
+         (endpoint-tpl (format "/tasks/%s/checklist" task-id)))
+    
+    (cl-loop for i from 0 below traverse-length
+             for local-item  = (nth i local-checkboxs)
+             for remote-item = (nth i remote-checklist)
+             do (cond
+                 ((and (not remote-item) local-item) (mistkafka/habitica/request
+                                                      endpoint-tpl
+                                                      "POST"
+                                                      `(("text" . ,(nth 1 local-item)))))
+                 
+                 ((and remote-item (not local-item)) (mistkafka/habitica/request
+                                                      (format "%s/%s" endpoint-tpl (alist-get 'id remote-item))
+                                                      "DELETE"))
+                 
+                 ((and remote-item local-item) (let* ((local-text (nth 1 local-item))
+                                                     (remote-text (alist-get 'text remote-item))
+                                                     (is-different (not (string= local-text remote-text))))
+                                                 (when is-different
+                                                   (mistkafka/habitica/request
+                                                    (format "%s/%s" endpoint-tpl (alist-get 'id remote-item))
+                                                    "PUT"
+                                                    `(("text" . ,local-text))))))
+                 (t  nil)
+                 ))
+    ))
 
 (defvar mistkafka/habitica/headline-queue-for-new-task nil)
 (defvar mistkakfa/habitica/headline-collect-task-flags '("IS-INBOX-HEADLINE" "IS-SIMPLE-ACTION" "IS-PROJECTS"))
@@ -499,7 +598,8 @@ everyX指的是频率"
              do (progn
                   (goto-char (org-find-property "HABITICA-ID" tmp-id))
                   (org-set-property "HABITICA-ID" id)
-                  (org-set-property "HABITICA-TYPE" (alist-get 'type res-data))))
+                  (org-set-property "HABITICA-TYPE" (alist-get 'type res-data))
+                  (mistkafka/habitica/sync-checklist res-data headline-info)))
     ))
 
 (defun mistkafka/habitica/sync-to-habitica ()

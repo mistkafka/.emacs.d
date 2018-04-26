@@ -51,3 +51,5 @@
   - [ ] 任务的check list同步
   - [ ] Project类型的任务同步成一个带有check list的任务
   - [ ] 支持Habit类型的任务
+  - [ ] 是否能实现一种机制，来记录本地每个headline的最近修改时间，然后通过对比最近修改时间来做与habitica的双向同步，即habitica上的变更也可以同步到本地：
+    
