@@ -42,6 +42,7 @@
 	 lst)
     (when seleted
       (setq lst (split-string seleted ":"))
+      (setq default-directory (mistkafka/git-project/get-git-root-path))
       (find-file (car lst))
       (goto-char (point-min))
       (forward-line (1- (string-to-number (cadr lst))))
@@ -62,6 +63,7 @@
 	 lst)
     (when seleted
       (setq lst (split-string seleted ":"))
+      (setq default-directory (mistkafka/git-project/get-git-root-path))
       (find-file (car lst))
       (goto-char (point-min))
       (forward-line (1- (string-to-number (cadr lst))))
