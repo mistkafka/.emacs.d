@@ -496,7 +496,8 @@ everyX指的是频率"
                                                   (remhash "type" local-task)
                                                   (mistkafka/habitica/request (format "/tasks/%s" task-id)
                                                                               "PUT" local-task)
-                                                  (mistkafka/habitica/sync-checklist task headline-info))))
+                                                  )))
+               (mistkafka/habitica/sync-checklist task headline-info)
                )
            ;; 完全是新的task，则新增一个headline
            (progn
@@ -514,37 +515,56 @@ everyX指的是频率"
 1. 线上不存在，本地存在：则根据本地新建
 2. 线上存在，本地不存在：则删除线上的
 3. 线上存在、本地存在：则对比文本，如果文本有出入，根据本地的文本更新线上的check item
-4. 线上本地都不存在：则什么都不用做"
+4. 线上本地都不存在：则什么都不用做
+
+全部同步完之后，线上跟本地的checklist数量、顺序、文本已经一致，接来下在统一同步 check box的check status"
   (let* ((remote-checklist (append (alist-get 'checklist task)  nil))
          (local-checkboxs (gethash "checkboxs" headline-info))
          (traverse-length (max (length remote-checklist)
                                (length local-checkboxs)))
          (task-id (alist-get 'id task))
-         (endpoint-tpl (format "/tasks/%s/checklist" task-id)))
+         (endpoint-tpl (format "/tasks/%s/checklist" task-id))
+         (latest-task-res nil))
     
     (cl-loop for i from 0 below traverse-length
              for local-item  = (nth i local-checkboxs)
              for remote-item = (nth i remote-checklist)
              do (cond
-                 ((and (not remote-item) local-item) (mistkafka/habitica/request
-                                                      endpoint-tpl
-                                                      "POST"
-                                                      `(("text" . ,(nth 1 local-item)))))
+                 ((and (not remote-item) local-item) (setq latest-task-res (mistkafka/habitica/request
+                                                                            endpoint-tpl
+                                                                            "POST"
+                                                                            `(("text" . ,(nth 1 local-item))))))
                  
-                 ((and remote-item (not local-item)) (mistkafka/habitica/request
-                                                      (format "%s/%s" endpoint-tpl (alist-get 'id remote-item))
-                                                      "DELETE"))
+                 ((and remote-item (not local-item)) (setq latest-task-res (mistkafka/habitica/request
+                                                                            (format "%s/%s" endpoint-tpl (alist-get 'id remote-item))
+                                                                            "DELETE")))
                  
                  ((and remote-item local-item) (let* ((local-text (nth 1 local-item))
                                                      (remote-text (alist-get 'text remote-item))
                                                      (is-different (not (string= local-text remote-text))))
                                                  (when is-different
-                                                   (mistkafka/habitica/request
-                                                    (format "%s/%s" endpoint-tpl (alist-get 'id remote-item))
-                                                    "PUT"
-                                                    `(("text" . ,local-text))))))
+                                                   (setq latest-task-res (mistkafka/habitica/request
+                                                                          (format "%s/%s" endpoint-tpl (alist-get 'id remote-item))
+                                                                          "PUT"
+                                                                          `(("text" . ,local-text)))))))
                  (t  nil)
                  ))
+
+    ;; 同步check status
+    (when latest-task-res
+      (setq remote-checklist (append
+                              (alist-get 'checklist (alist-get 'data latest-task-res))
+                              nil)))
+    
+    (cl-loop for i from 0 below (length remote-checklist)
+             for local-item  = (nth i local-checkboxs)
+             for remote-item = (nth i remote-checklist)
+             for local-checked = (nth 0 local-item)
+             for remote-checked = (equal (alist-get 'completed remote-item) t)
+             for check-item-id = (alist-get 'id remote-item)
+             for check-endpoint = (format "%s/%s/score" endpoint-tpl check-item-id)
+             do (when (not (equal local-checked remote-checked))
+                  (mistkafka/habitica/request check-endpoint "POST")))
     ))
 
 (defvar mistkafka/habitica/headline-queue-for-new-task nil)
