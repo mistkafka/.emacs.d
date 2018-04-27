@@ -46,10 +46,20 @@
       2. 只捕获类型为TODO/NEXT，且没有habitica-id的任务
       3. 往habitica上新增一个任务
 
-  - [X] validate：对CRUD进行合法性验证
+  - [ ] +validate：对CRUD进行合法性验证+
   - [ ] +检查“建议填写”项，如果没有填写，询问是否需要填写。免得创建的任务需要修改。+
-  - [ ] 任务的check list同步
+  - [X] 任务的check list同步
   - [ ] Project类型的任务同步成一个带有check list的任务
   - [ ] 支持Habit类型的任务
   - [ ] 是否能实现一种机制，来记录本地每个headline的最近修改时间，然后通过对比最近修改时间来做与habitica的双向同步，即habitica上的变更也可以同步到本地：
+  - [ ] 就现阶段（已经支持check list同步）而言，=mistkafka-habitica=已经达到一个最小可行的版本，下一步还有一些东西需要修缮一下：
+    - [ ] 支持日志记录 :: 把curl、同步的内容全都放到一个log文件里，并且做好时间戳、格式化等工作，方便下一步维护的时候调试
+
+    - [ ] 统一数据格式 :: 现在curl的返回是alist、而我组装数据是用hash-table，这样使用数据结构让人有点分裂，全部统一是哟欧诺个hash-table吧！
+
+    - [ ] 支持exclude某个条件的headline :: 比如，加密的headline我是不希望同步到habitica上的，这有可能会让加密内容泄露出去
+
+    - [ ] 加个本地变量限制habitica的使用范围 :: 我希望只在我指定的文件里开启habitica同步！
+
+    - [ ] 抽离配置项 :: 把一些配置项抽离出来
     
