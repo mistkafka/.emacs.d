@@ -57,8 +57,8 @@
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
 (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-(add-hook 'typescript-mode-hook 'flycheck-mode)
-(add-hook 'web-mode-hook 'flycheck-mode)
+;; (add-hook 'typescript-mode-hook 'flycheck-mode)
+;; (add-hook 'web-mode-hook 'flycheck-mode)
 
 ;; (require-package 'lsp-javascript-typescript)
 ;; (require 'lsp-typescript)
@@ -67,19 +67,19 @@
 ;; (add-hook 'web-mode-hook #'lsp-typescript-enable) ;; *.tsx
 ;; (add-hook 'js2-mode-hook #'lsp-typescript-enable) ;; for js2-mode support
 ;; (add-hook 'rjsx-mode #'lsp-typescript-enable) ;; for rjsx-mode support
-(defconst
-  lsp-typescript--get-root
-  (lsp-make-traverser #'(lambda (dir)
-			  (directory-files dir nil "tsconfig.json\\|package.json")
-			  )
-		      ))
-(lsp-define-stdio-client
- lsp-typescript
- "javascript"
- lsp-typescript--get-root
- '("typescript-language-server" "--stdio"))
-(add-hook 'typescript-mode-hook #'lsp-typescript-enable) ;; for typescript support
-(add-hook 'web-mode-hook #'lsp-typescript-enable) ;; *.tsx
+;; (defconst
+;;   lsp-typescript--get-root
+;;   (lsp-make-traverser #'(lambda (dir)
+;; 			  (directory-files dir nil "tsconfig.json\\|package.json")
+;; 			  )
+;; 		      ))
+;; (lsp-define-stdio-client
+;;  lsp-typescript
+;;  "javascript"
+;;  lsp-typescript--get-root
+;;  '("typescript-language-server" "--stdio"))
+;; (add-hook 'typescript-mode-hook #'lsp-typescript-enable) ;; for typescript support
+;; (add-hook 'web-mode-hook #'lsp-typescript-enable) ;; *.tsx
 
 (require-package 'lsp-python)
 (add-hook 'python-mode-hook #'lsp-python-enable)
