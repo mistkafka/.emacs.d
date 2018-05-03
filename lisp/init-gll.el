@@ -47,6 +47,73 @@ If BROWSER is provated, use the BROWSER open the link."
              (let ((id (nth 0 (split-string assigner " "))))
                (shell-command-to-string (format "gllue-cli merge-request -a %s" id))))))
 
+(defun gll/edit-gllue-vue-template-string-at-point ()
+  (interactive)
+  (let* ((find-region)
+         (template-string-start)
+         (template-string-end)
+         (tmp-buffer-name)
+         (tmp-buffer)
+         (current-buffer-name)
+         (current-buffer-ins)
+         (edit-content))
+
+    (setq find-region (evil-select-quote ?\` nil nil nil 1))
+    (if find-region
+        (progn
+          (setq template-string-start (nth 0 find-region))
+          (setq template-string-end (nth 1 find-region))
+
+          (setq edit-content (buffer-substring-no-properties template-string-start template-string-end))
+
+          (setq current-buffer-name (buffer-name))
+          (setq current-buffer-ins (current-buffer))
+          (setq tmp-buffer-name (format "*- vue-template-editor: %s -*" current-buffer-name))
+          (setq tmp-buffer (generate-new-buffer tmp-buffer-name))
+          (switch-to-buffer tmp-buffer)
+
+          ;; 在没有file的buffer里执行web-mode会报错，导致后续语句全挂了
+          (ignore-errors (web-mode))
+          (insert edit-content)
+
+          ;; 切换model会重置local variable，所以只能在切换到web-mode后执行
+          (setq-local gllue/vue-template-editor-origin-buffer--local current-buffer-ins)
+          (setq-local gllue/vue-template-editor-origin-string-start--local template-string-start)
+
+          (local-set-key (kbd "C-x C-s") 'gll/save-current-gllue-vue-template-string)
+          (local-set-key (kbd "C-x s") 'gll/save-current-gllue-vue-template-string)
+
+          (message "进入narrow编辑模式，编辑完成通过`gllue/save-current-gllue-vue-template-string`退出"))
+      (message "没有找到template string。"))))
+
+(defun gll/save-current-gllue-vue-template-string ()
+  (interactive)
+  (let* ((current-buffer-name (buffer-name))
+         (origin-infos)
+         (origin-buffer-name)
+         (origin-string-start-point)
+         (origin-string-end-point)
+         (gllue/vue-template-editor-origin-string-start gllue/vue-template-editor-origin-string-start--local)
+         (gllue/vue-template-editor-origin-string-end)
+         (edited-content (buffer-substring-no-properties (point-min) (point-max))))
+
+    (with-current-buffer gllue/vue-template-editor-origin-buffer--local
+      (goto-char gllue/vue-template-editor-origin-string-start)
+      (setq gllue/vue-template-editor-origin-string-end (nth 1 (evil-select-quote ?\` nil nil nil 1)))
+      (delete-region gllue/vue-template-editor-origin-string-start gllue/vue-template-editor-origin-string-end)
+      (insert edited-content)
+      (save-buffer)
+      (message "回写成功！"))))
+
+(defun gll/kill-all-vue-template-edit-buffer ()
+  (interactive)
+  (mapcar
+   (lambda (buffer)
+     (when (s-starts-with? "*- vue-template-editor: " (buffer-name buffer))
+       (kill-buffer buffer)))
+   (buffer-list))
+  (message "已清除所有vue template editor buffer"))
+
 (mistkafka/keyboard/bind "Gm" 'gll/merge-request)
 (mistkafka/keyboard/bind "Gp" 'gll/open-project-task-at-point)
 (mistkafka/keyboard/bind "GP" 'gll/open-project-task)
