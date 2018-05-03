@@ -17,7 +17,7 @@
   "Find file in current git project."
   (interactive)
   (let* ((default-directory (mistkafka/git-project/get-git-root-path))
-	 (files (split-string (shell-command-to-string "git ls-files") "\n" t))
+	 (files (split-string (shell-command-to-string "git ls-files -z") "\0" t))
 	 (selected-file (ivy-read "pattern: " files)))
     (when selected-file
       (find-file selected-file)
