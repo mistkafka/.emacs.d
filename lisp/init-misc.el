@@ -188,9 +188,25 @@ Or prompt user input."
 ;; no tab
 (setq-default indent-tabs-mode nil)
 
-;; 移除magit的"M-n"绑定，这是我的 leader-key
+
+(defun recovery-my-leader-key ()
+  "移除magit的`M-n'绑定，这是我的 leader-key"
+  (interactive)
+  (local-set-key (kbd "M-n") nil))
+
 (add-hook 'magit-mode-hook
-          (lambda ()
-            (local-set-key (kbd "M-n") nil)))
+          'recovery-my-leader-key)
+;; 移除term-mode的"M-n"绑定
+(add-hook 'term-mode-hook
+          'recovery-my-leader-key)
+
+;; common lisp
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(setq slime-contribs '(slime-fancy))
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+;; 禁止吵死人的bell
+(setq visible-bell nil)
+(setq ring-bell-function 'ignore)
 
 (provide 'init-misc)
