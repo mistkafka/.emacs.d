@@ -213,6 +213,6 @@
 (mistkafka/keyboard/bind "ps" 'mistkafka/git-project/switch-to-git-project)
 
 (mistkafka/keyboard/bind "fcp" 'mistkafka/git-project/copy-file-name-in-project-to-clipboard)
-(mistkafka/keyboard/bind "fcs" 'mistkafka/git-project/copy-file-name-in-project-to-clipboard)
+(mistkafka/keyboard/bind "fcs" 'mistkafka/git-project/copy-file-name-in-system-to-clipboard)
 
 (provide 'init-git-project)
