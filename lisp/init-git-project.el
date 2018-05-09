@@ -3,6 +3,7 @@
 (require-package 's)
 (require 'json-storage)
 (require 'seq)
+(require 'dash)
 
 (require 'mistkafka-file)
 
@@ -207,6 +208,51 @@
       (message "没有注册过project"))
     ))
 
+(defun mistkafka/git-project/switch-buffer ()
+  "只能切换到当前project的buffer，免得造成乌龙！"
+  (interactive)
+  (if (mistkafka/git-project/get-git-root-path)
+      (mistkafka/git-project/do-switch-buffer)
+    (message "当前目录不是git项目，请使用C-x C-b")))
+
+(defun mistkafka/git-project/do-switch-buffer ()
+  (let* ((git-root-path (expand-file-name (mistkafka/git-project/get-git-root-path)))
+         (file-names (->> (buffer-list)
+                          (append `(,(other-buffer (current-buffer) 1))) ; 插入上一个buffer作为第一个
+                          (mapcar (lambda (bffr)
+                                    (buffer-file-name bffr)))
+                          (seq-filter (lambda (bffr-name)
+                                        (s-starts-with? git-root-path (or bffr-name ""))))
+                          (mapcar (lambda (bffr-name)
+                                    (let* ((short-file-name (format "%s.%s"
+                                                                    (file-name-base bffr-name)
+                                                                    (file-name-extension bffr-name)
+                                                                    ))
+                                           (file-name-in-project (replace-regexp-in-string git-root-path "/" bffr-name)))
+                                      (format "%-30s : %s"
+                                              short-file-name
+                                              file-name-in-project
+                                              ))))
+                          ))
+         (selected (ivy-read "Switch to Buffer: " file-names :initial-input "^")))
+    (when selected
+      (find-file (s-concat
+                  git-root-path
+                  (substring selected (+ 3 (s-index-of " : " selected))))))
+    ))
+
+(defun mistkafka/git-project/kill-buffers ()
+  "清除本project的所有buffer"
+  (interactive)
+  (let ((git-root-path (expand-file-name (mistkafka/git-project/get-git-root-path))))
+    (mapcar
+     (lambda (buffer)
+       (when (s-starts-with? git-root-path (buffer-file-name buffer))
+         (kill-buffer buffer)))
+     (buffer-list))
+    (find-file git-root-path))
+  (message "已清除本project的所有buffer"))
+
 (mistkafka/keyboard/bind "pf" 'mistkafka/git-project/find-file)
 (mistkafka/keyboard/bind "pg" 'mistkafka/git-project/git-grep)
 (mistkafka/keyboard/bind "pG" 'mistkafka/git-project/reactive-git-grep)
@@ -214,5 +260,7 @@
 
 (mistkafka/keyboard/bind "fcp" 'mistkafka/git-project/copy-file-name-in-project-to-clipboard)
 (mistkafka/keyboard/bind "fcs" 'mistkafka/git-project/copy-file-name-in-system-to-clipboard)
+(global-set-key (kbd "C-x b") 'mistkafka/git-project/switch-buffer)
+(global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
 
 (provide 'init-git-project)
