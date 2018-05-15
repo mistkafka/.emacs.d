@@ -209,4 +209,14 @@ Or prompt user input."
 (setq visible-bell nil)
 (setq ring-bell-function 'ignore)
 
+;; 工具函数
+(defun my/system-dialog (title message)
+  (call-process "osascript"
+                nil 0 nil
+                "-e" (format "display dialog \"%s\" with title \"%s\"" message title)))
+
+;; window编号
+(require-package 'window-numbering)
+(window-numbering-mode 1)
+
 (provide 'init-misc)

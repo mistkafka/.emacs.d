@@ -2,7 +2,8 @@
   
   (setq org-todo-keywords
 	(quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d@/!)")
-		(sequence "PROJECT(p)" "|" "DONE(d@/!)" "CANCELLED(c@/!)"))))
+		(sequence "PROJECT(p)" "|" "DONE(d@/!)" "CANCELLED(c@/!)")
+                (sequence "HABIT(h)" "HABIT+(+)" "HABIT-(-)" "|" "DONE(d@/!)" "CANCELLED(c@/!)"))))
   
   (setq org-todo-repeat-to-state "NEXT")
   
@@ -68,6 +69,20 @@
          "\\|"
          "\\(?:\\*\\|[+-]?[[:alnum:].,\\]*[[:alnum:]]\\)\\)")))
 
+(defun mistkafka/org-setup-pomodoro ()
+  (add-hook 'org-pomodoro-finished-hook
+            (lambda ()
+              (my/system-dialog "Pomodoro completed!" "Time for a break.")))
+  (add-hook 'org-pomodoro-break-finished-hook
+            (lambda ()
+              (my/system-dialog "Pomodoro Short Break Finished" "Ready for Another?")))
+  (add-hook 'org-pomodoro-long-break-finished-hook
+            (lambda ()
+              (my/system-dialog "Pomodoro Long Break Finished" "Ready for Another?")))
+  (add-hook 'org-pomodoro-killed-hook
+            (lambda ()
+              (my/system-dialog "Pomodoro Killed" "One does not simply kill a pomodoro!"))))
+
 (with-eval-after-load 'org
   (progn
     (mistkafka/org-setup-todo-keywords)
@@ -76,6 +91,7 @@
     (mistkafka/org-setup-org-crypt)
     (mistkafka/org-defun-alias-funs)
     (mistkafka/org-setup-markup)
+    (mistkafka/org-setup-pomodoro)
     ))
 
 (provide 'init-org)
