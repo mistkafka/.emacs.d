@@ -62,4 +62,7 @@
     - [ ] 加个本地变量限制habitica的使用范围 :: 我希望只在我指定的文件里开启habitica同步！
 
     - [ ] 抽离配置项 :: 把一些配置项抽离出来
-    
+  - [ ] 支持habit类型的任务
+
+* BUGs
+** deadline变更不会同步到habitica
