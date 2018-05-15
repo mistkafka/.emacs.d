@@ -211,11 +211,15 @@
 (defun mistkafka/git-project/switch-buffer ()
   "只能切换到当前project的buffer，免得造成乌龙！"
   (interactive)
-  (if (mistkafka/git-project/get-git-root-path)
-      (mistkafka/git-project/do-switch-buffer)
-    (message "当前目录不是git项目，请使用C-x C-b")))
+  (cond
+   ;; 没有file的buffer要放前面，不然会被有file的buffer抢先
+   ;; 因为没有file的buffer，此时的current-path指向的是上个带有file的buffer
+   ((mistkafka/git-project/is-term-mode-buffer) (mistkafka/git-project/do-switch-buffer--for-term-mode))
+   
+   ((mistkafka/git-project/get-git-root-path)   (mistkafka/git-project/do-switch-buffer--for-git-repo))
+   (t                                           (message "当前目录不是git项目，请使用C-x C-b"))))
 
-(defun mistkafka/git-project/do-switch-buffer ()
+(defun mistkafka/git-project/do-switch-buffer--for-git-repo ()
   (let* ((git-root-path (expand-file-name (mistkafka/git-project/get-git-root-path)))
          (file-names (->> (buffer-list)
                           (append `(,(other-buffer (current-buffer) 1))) ; 插入上一个buffer作为第一个
@@ -223,6 +227,7 @@
                                     (buffer-file-name bffr)))
                           (seq-filter (lambda (bffr-name)
                                         (s-starts-with? git-root-path (or bffr-name ""))))
+                          (seq-uniq)    ; 去重
                           (mapcar (lambda (bffr-name)
                                     (let* ((short-file-name (format "%s.%s"
                                                                     (file-name-base bffr-name)
@@ -240,6 +245,27 @@
                   git-root-path
                   (substring selected (+ 3 (s-index-of " : " selected))))))
     ))
+
+(defun mistkafka/git-project/do-switch-buffer--for-term-mode ()
+  "将所有Term Mode作为一个group，进行buffer切换"
+  (let* ((term-buffer-names (->> (buffer-list)
+                                 (append `(,(other-buffer (current-buffer) 1))) ; 插入上一个buffer作为第一个
+                                 (seq-filter 'mistkafka/git-project/is-term-mode-buffer)
+                                 (mapcar (lambda (bffr)
+                                           (buffer-name bffr)))
+                                 (seq-uniq)
+                                 ))
+         (selected-name (ivy-read "Switch to Buffer：" term-buffer-names :initial-input "^")))
+    (when selected-name
+      (switch-to-buffer selected-name))
+    ))
+
+(defun mistkafka/git-project/is-term-mode-buffer (&optional bffr)
+  (unless bffr
+    (setq bffr (current-buffer)))
+  (with-current-buffer bffr
+    (equal 'term-mode major-mode)))
+
 
 (defun mistkafka/git-project/kill-buffers ()
   "清除本project的所有buffer"
