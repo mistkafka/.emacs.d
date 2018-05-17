@@ -94,4 +94,18 @@
     (mistkafka/org-setup-pomodoro)
     ))
 
+(defun mistkafka/org-mode/inbox ()
+  (interactive)
+  (let ((new-inbox-item (ivy-read "Inbox: " nil)))
+    (when new-inbox-item
+      (with-current-buffer (find-file-noselect "~/gtd/index.org.gpg")
+        (goto-char (org-find-property "IS-INBOX-HEADLINE"))
+        (goto-char (org-end-of-subtree))
+        (insert "\n** ")
+        (insert new-inbox-item)
+        (save-buffer)
+        (message "添加成功！"))
+      )))
+  
+
 (provide 'init-org)
