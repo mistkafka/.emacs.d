@@ -253,19 +253,32 @@ Or prompt user input."
   (term-send-raw-string "\C-m")
   )
 
+(defun mistkafka/term-mode/toggle-term-line-char-mode ()
+  (interactive)
+  (cond
+   ((term-in-char-mode) (progn
+                          (term-line-mode)
+                          (message "切换到line-mode")))
+   ((term-in-line-mode) (progn
+                          (term-char-mode)
+                          (message "切换到char-mode")))
+    )
+   )
+
+(setq mistkafka/term-mode/gll-term-names '("server" "mysql" "tsc" "terminal"))
+
 (defun mistkafka/term-mode/init-gll-terms-group ()
   (interactive)
-  (ansi-term "/bin/bash" "server")
-  (ansi-term "/bin/bash" "mysql")
-  (ansi-term "/bin/bash" "tsc")
-  (ansi-term "/bin/bash" "terminal")
-  (run-at-time "1" nil 'mistkafka/term-mode/do-send-init-command)
-  )
+  (cl-loop for term-name in mistkafka/term-mode/gll-term-names
+           do (ansi-term "/bin/bash" term-name))
+  (run-at-time "0.5" nil 'mistkafka/term-mode/do-send-init-command))
 
 (defun mistkafka/term-mode/do-send-init-command ()
-  (cl-loop for bffr-name in '("*server*" "*mysql*" "*tsc*" "*terminal*")
+  (cl-loop for term-name in mistkafka/term-mode/gll-term-names
+           for bffr-name = (format "*%s*" term-name)
            do (when bffr-name
                 (with-current-buffer bffr-name
+                  (rename-buffer term-name)
                   (mistkafka/term-mode/send-init-command)
                   (recovery-my-leader-key)
                   (local-set-key (kbd "M-x") nil)))))
