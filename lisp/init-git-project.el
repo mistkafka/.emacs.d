@@ -88,7 +88,7 @@
 (defun mistkafka/git-project/copy-file-name-to-clipboard (filename)
   "Utils, copy FILENAME to clipboard"
   (when filename
-    (kill-new filename)
+    (mistkafka/clipboard/write-clipboard filename)
     (message "Copied filename '%s' to the clipboard" filename)))
 
 (defun mistkafka/git-project/copy-file-name-in-system-to-clipboard ()
