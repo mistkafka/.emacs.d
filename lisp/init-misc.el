@@ -245,4 +245,29 @@ Or prompt user input."
 (global-set-key (kbd "s-c") 'mistkafka/clipboard/copy-region)
 (global-set-key (kbd "s-v") 'mistkafka/clipboard/paste)
 
+;; term-mode相关配置
+(defun mistkafka/term-mode/send-init-command ()
+  "source ~/.bash_profile来初始化终端环境"
+  (interactive)
+  (term-send-raw-string "source ~/.bash_profile")
+  (term-send-raw-string "\C-m")
+  )
+
+(defun mistkafka/term-mode/init-gll-terms-group ()
+  (interactive)
+  (ansi-term "/bin/bash" "server")
+  (ansi-term "/bin/bash" "mysql")
+  (ansi-term "/bin/bash" "tsc")
+  (ansi-term "/bin/bash" "terminal")
+  (run-at-time "1" nil 'mistkafka/term-mode/do-send-init-command)
+  )
+
+(defun mistkafka/term-mode/do-send-init-command ()
+  (cl-loop for bffr-name in '("*server*" "*mysql*" "*tsc*" "*terminal*")
+           do (when bffr-name
+                (with-current-buffer bffr-name
+                  (mistkafka/term-mode/send-init-command)
+                  (recovery-my-leader-key)
+                  (local-set-key (kbd "M-x") nil)))))
+
 (provide 'init-misc)
