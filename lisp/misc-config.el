@@ -44,5 +44,21 @@
                               ":beers: - Writing code drunkenly."
                               ":speech_balloon: - Updating text and literals."
                               ))
+;; 邮箱：设置smtp
+(setq
+ send-mail-function 'smtpmail-send-it
+ message-send-mail-function 'smtpmail-send-it
+ user-mail-address "zhenguolin@me.com"
+ user-full-name "MistKafka"
+ smtpmail-starttls-credentials '(("smtp.mail.me.com" 587 nil nil))
+ smtpmail-auth-credentials  (expand-file-name "~/.authinfo.gpg")
+ smtpmail-default-smtp-server "smtp.mail.me.com"
+ smtpmail-smtp-server "smtp.mail.me.com"
+ smtpmail-smtp-service 587
+ smtpmail-debug-info t
+ starttls-extra-arguments nil
+ starttls-gnutls-program (executable-find "gnutls-cli")
+ smtpmail-warn-about-unknown-extensions t
+ starttls-use-gnutls t)
 
 (provide 'misc-config)
