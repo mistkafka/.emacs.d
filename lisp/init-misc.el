@@ -311,5 +311,8 @@ Or prompt user input."
     (local-set-key (kbd "<tab>") 'shr-next-link)
     (local-set-key (kbd "<backtab>") 'shr-previous-link)))
 
+(mistkafka/keyboard/bind "mm" 'mu4e)
+(mistkafka/keyboard/bind "mu" 'mu4e-update-mail-and-index)
+
 
 (provide 'init-misc)
