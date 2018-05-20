@@ -39,17 +39,6 @@
     (org-remove-file))
   )
 
-(defun mistkafka/org-indent-current-buffer ()
-  (interactive)
-  (org-indent-region (point-min) (point-max)))
-
-(defun mistkafka/org-setup-hook ()
-  (add-hook 'org-mode-hook
-	    (lambda ()
-	      (add-hook 'before-save-hook 'mistkafka/org-indent-current-buffer nil 'make-it-local))
-	    )
-  )
-
 (setq org-emphasis-regexp-components
       ;; markup 记号前后允许中文，必须在org load之前执行。因为org里的defvar不用覆盖已有的值
       ;; 并且org在初始化的时候，就需要这个值了
@@ -87,7 +76,6 @@
   (progn
     (mistkafka/org-setup-todo-keywords)
     (mistkafka/org-setup-archive)
-    (mistkafka/org-setup-hook)
     (mistkafka/org-setup-org-crypt)
     (mistkafka/org-defun-alias-funs)
     (mistkafka/org-setup-markup)
