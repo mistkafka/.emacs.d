@@ -106,6 +106,21 @@
         (save-buffer)
         (message "添加成功！"))
       )))
+
+(defconst weekdays-arr ["Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"])
+(defun mistkafka/org-mode/new-journay ()
+  (interactive)
+  (find-file "~/gtd/journal.org.gpg")
+  (goto-char (point-max))
+  (insert "\n* ")
+  (insert (format-time-string "%Y-%m-%d " (current-time)))
+  (insert (aref weekdays-arr
+                (- (string-to-number (format-time-string "%u" (current-time))) 1)))
+  (insert "\n")
+  (org-narrow-to-element))
+
+(mistkafka/keyboard/bind "ti" 'mistkafka/org-mode/inbox)
+(mistkafka/keyboard/bind "ta" 'org-agenda)
   
 
 (provide 'init-org)
