@@ -15,3 +15,5 @@ lisp/habitica-config.el
 
 url
 request
+eww-bookmarks
+network-security.data
