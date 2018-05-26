@@ -314,5 +314,8 @@ Or prompt user input."
 (mistkafka/keyboard/bind "mm" 'mu4e)
 (mistkafka/keyboard/bind "mu" 'mu4e-update-mail-and-index)
 
+;; editor config
+(require-package 'editorconfig)
+(editorconfig-mode 1)
 
 (provide 'init-misc)
