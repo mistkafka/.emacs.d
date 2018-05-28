@@ -1,7 +1,8 @@
 (defun mistkafka/setup-tide-mode ()
   (tide-setup)
   (tide-hl-identifier-mode +1)
-  (eldoc-mode +1))
+  (eldoc-mode +1)
+  (flycheck-mode +1))
 
 (add-hook 'typescript-mode-hook #'mistkafka/setup-tide-mode)
 
