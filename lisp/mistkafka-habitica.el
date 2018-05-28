@@ -333,7 +333,7 @@ everyX指的是频率"
   (unless headline-info
     (setq headline-info (mistkafka/habitica/get-current-headline-info)))
   
-  (if (and (string= "CANCELLED" (gethash "todo-keyword" headline-info))
+  (if (and (seq-contains '("CANCELLED" "WAITING") (gethash "todo-keyword" headline-info))
            (gethash "habitica-id" headline-info))
       (progn
         (mistkafka/habitica/del-task (gethash "habitica-id" headline-info))

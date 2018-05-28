@@ -1,7 +1,7 @@
 (defun mistkafka/org-setup-todo-keywords ()
   
   (setq org-todo-keywords
-	(quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d@/!)")
+	(quote ((sequence "TODO(t)" "NEXT(n)" "|" "WAITING(w)" "DONE(d@/!)")
 		(sequence "PROJECT(p)" "|" "DONE(d@/!)" "CANCELLED(c@/!)")
                 (sequence "HABIT(h)" "HABIT+(+)" "HABIT-(-)" "|" "DONE(d@/!)" "CANCELLED(c@/!)"))))
   
