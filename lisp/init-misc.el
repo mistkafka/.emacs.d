@@ -273,6 +273,11 @@ Or prompt user input."
            do (ansi-term "/bin/bash" term-name))
   (run-at-time "0.5" nil 'mistkafka/term-mode/do-send-init-command))
 
+(defun mistkafka/term-mode/reset-keybind ()
+  (interactive)
+  (recovery-my-leader-key)
+  (local-set-key (kbd "M-x") nil))
+
 (defun mistkafka/term-mode/do-send-init-command ()
   (cl-loop for term-name in mistkafka/term-mode/gll-term-names
            for bffr-name = (format "*%s*" term-name)
@@ -280,8 +285,7 @@ Or prompt user input."
                 (with-current-buffer bffr-name
                   (rename-buffer term-name)
                   (mistkafka/term-mode/send-init-command)
-                  (recovery-my-leader-key)
-                  (local-set-key (kbd "M-x") nil)))))
+                  (mistkafka/term-mode/reset-keybind)))))
 
 
 ;; 邮箱配置，http://www.ict4g.net/adolfo/notes/2014/12/27/emacs-imap.html
@@ -317,5 +321,8 @@ Or prompt user input."
 ;; editor config
 (require-package 'editorconfig)
 (editorconfig-mode 1)
+
+;; 开启行号
+(global-linum-mode +1)
 
 (provide 'init-misc)
