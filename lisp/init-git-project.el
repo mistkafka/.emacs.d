@@ -51,26 +51,52 @@
     )
   )
 
+(setq mistkafka/git-project/git-grep--last-candidates nil)
+(setq mistkafka/git-project/git-grep--history-input-texts nil)
 
 (defun mistkafka/git-project/git-grep (is-in-current-directory?)
   "输入一段pattern，然后进行git grep。适用于大项目。"
   (interactive "P")
+  
+  (if mistkafka/git-project/git-grep--last-candidates
+      (mistkafka/git-project/git-grep--do-select mistkafka/git-project/git-grep--last-candidates)
+    (mistkafka/git-project/git-grep--do-resarch is-in-current-directory?)))
+
+(defun mistkafka/git-project/git-grep--do-resarch (is-in-current-directory?)
+  (setq mistkafka/git-project/git-grep--last-candidates nil)
+  (setq mistkafka/git-project/git-grep--history-input-texts nil)
   (let* ((default-directory (mistkafka/git-project/determine-git-grep-path is-in-current-directory?))
 	 (keyword (ivy-read "keyword: " nil))
 	 (cmd (format "git --no-pager grep --full-name -n --no-color -i -e \"%s\"" keyword))
 	 (result-str (shell-command-to-string cmd))
-	 (result (split-string result-str "\n" t))
-	 (seleted (ivy-read "choose: " result))
-	 lst)
-    (when seleted
-      (setq lst (split-string seleted ":"))
-      (setq default-directory (mistkafka/git-project/get-git-root-path))
+	 (candidates (split-string result-str "\n" t)))
+    (setq mistkafka/git-project/git-grep--last-candidates candidates)
+    (mistkafka/git-project/git-grep--do-select candidates)
+    ))
+
+(defun mistkafka/git-project/git-grep--do-select (candidates)
+  (let* ((last-input-text (substring-no-properties (or
+                                                    (nth 0 mistkafka/git-project/git-grep--history-input-texts)
+                                                    "")))
+         (selected nil)
+         (prompt "choose: ")
+         (default-directory (mistkafka/git-project/get-git-root-path))
+         (lst nil))
+    (setq selected (ivy-read prompt candidates
+                             :history 'mistkafka/git-project/git-grep--history-input-texts
+                             :initial-input last-input-text))
+    (when selected
+      (setq lst (split-string selected ":"))
       (find-file (car lst))
       (goto-char (point-min))
       (forward-line (1- (string-to-number (cadr lst))))
-      )
-    )
-  )
+      )))
+
+(defun mistkafka/git-project/git-grep--clear-cache ()
+  (interactive)
+  (setq mistkafka/git-project/git-grep--last-candidates nil)
+  (setq mistkafka/git-project/git-grep--history-input-texts nil)
+  (message "已经清除git-grep缓存！"))
 
 (defun mistkafka/git-project/determine-git-grep-path (is-in-current-directory?)
   "git grep 的辅助函数。如果`IS-IN-CURRENT-DIRECTORY?'不为nil，则返回当前文件所在的文件夹。
@@ -283,6 +309,8 @@
 (mistkafka/keyboard/bind "pg" 'mistkafka/git-project/git-grep)
 (mistkafka/keyboard/bind "pG" 'mistkafka/git-project/reactive-git-grep)
 (mistkafka/keyboard/bind "ps" 'mistkafka/git-project/switch-to-git-project)
+(mistkafka/keyboard/bind "pc" 'mistkafka/git-project/git-grep--clear-cache)
+
 
 (mistkafka/keyboard/bind "fcp" 'mistkafka/git-project/copy-file-name-in-project-to-clipboard)
 (mistkafka/keyboard/bind "fcs" 'mistkafka/git-project/copy-file-name-in-system-to-clipboard)
