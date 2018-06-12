@@ -107,8 +107,17 @@
   (insert "\n")
   (org-narrow-to-element))
 
+(defun mistkafka/org-mode/start-pomodoro ()
+  (interactive)
+  (with-current-buffer (find-file-noselect "~/gtd/pomodoro.org.gpg")
+    (goto-char (org-find-property "IS-POMODORO-HEADLINE"))
+    (org-pomodoro)
+    (save-buffer)
+    ))
+
 (mistkafka/keyboard/bind "ti" 'mistkafka/org-mode/inbox)
 (mistkafka/keyboard/bind "ta" 'org-agenda)
+(mistkafka/keyboard/bind "tp" 'mistkafka/org-mode/start-pomodoro)
   
 
 (provide 'init-org)
