@@ -311,4 +311,33 @@ Or prompt user input."
          (project-task-id (string-to-number (nth 1 (s-match "\\[\\#\\([0-9]+\\)\\]" commit-message)))))
     (gll/open-project-task project-task-id)))
 
+;; custom mode-line
+(setq-default
+ mode-line-format
+ (list
+  ;; window number
+  '(:eval (propertize (window-numbering-get-number-string) 'face '((:foreground "#45256F"))))
+  " "
+  
+  ;; buffer name and edit status
+  '(:eval (propertize "%b" 'face 'font-lock-keyword-face
+                      'help-echo (buffer-file-name)))
+  ":%* "
+  
+  ;; relative position, column
+  "["
+  (propertize "%p" 'face 'font-lock-constant-face) ;; % above top
+  ","
+  (propertize "%02c" 'face 'font-lock-type-face)
+  "] "
+
+  ;; the current major mode for the buffer.
+  "["
+  '(:eval (propertize "%m" 'face 'font-lock-string-face
+                      'help-echo buffer-file-coding-system))
+  "] "
+
+  'org-pomodoro-mode-line  
+  ))
+
 (provide 'init-misc)
