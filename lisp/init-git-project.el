@@ -265,7 +265,7 @@
                                               file-name-in-project
                                               ))))
                           ))
-         (selected (ivy-read "Switch to Buffer: " file-names :initial-input "^")))
+         (selected (ivy-read "Switch to Buffer: " file-names)))
     (when selected
       (find-file (s-concat
                   git-root-path
