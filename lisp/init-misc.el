@@ -316,7 +316,7 @@ Or prompt user input."
  mode-line-format
  (list
   ;; window number
-  '(:eval (propertize (window-numbering-get-number-string) 'face '((:foreground "#45256F"))))
+  '(:eval (propertize (format "__%s__" (window-numbering-get-number-string)) 'face '((:foreground "#308191"))))
   " "
   
   ;; buffer name and edit status
@@ -339,5 +339,8 @@ Or prompt user input."
 
   'org-pomodoro-mode-line  
   ))
+
+;; remove tool-bar
+(tool-bar-mode -1)
 
 (provide 'init-misc)
