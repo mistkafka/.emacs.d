@@ -337,10 +337,48 @@ Or prompt user input."
                       'help-echo buffer-file-coding-system))
   "] "
 
+  '(:eval (propertize (magit-get-current-branch) 'face 'font-lock-string-face))
+
   'org-pomodoro-mode-line  
   ))
 
 ;; remove tool-bar
 (tool-bar-mode -1)
+
+;; poor kill-ring-show
+(setq mistkafka/kill-ring/snippets nil)
+(defun mistkafka/kill-ring/empty ()
+  (interactive)
+  (setq mistkafka/kill-ring/snippets nil)
+  (message "黏贴板：已清空！"))
+
+(defun mistkafka/kill-ring/add (snippet)
+  (setq mistkafka/kill-ring/snippets
+        (cons snippet mistkafka/kill-ring/snippets))
+  (message "黏贴板：添加成功！"))
+
+(defun mistkafka/kill-ring/add--from-latest-kill-ring ()
+  (interactive)
+  (mistkafka/kill-ring/add
+   (substring-no-properties
+    (nth 0 kill-ring))))
+
+(defun mistkafka/kill-ring/insert ()
+  (interactive)
+  (let ((selected (ivy-read "Select: "  mistkafka/kill-ring/snippets)))
+    (when selected
+      (insert selected))))
+
+(defun mistkafka/kill-ring/copy ()
+  (interactive)
+  (let ((selected (ivy-read "Select: "  mistkafka/kill-ring/snippets)))
+    (when selected
+      (kill-new selected)
+      (message "黏贴板：复制成功！"))))
+
+(mistkafka/keyboard/bind "ke" 'mistkafka/kill-ring/empty)
+(mistkafka/keyboard/bind "ka" 'mistkafka/kill-ring/add--from-latest-kill-ring)
+(mistkafka/keyboard/bind "ki" 'mistkafka/kill-ring/insert)
+(mistkafka/keyboard/bind "kc" 'mistkafka/kill-ring/copy)
 
 (provide 'init-misc)
