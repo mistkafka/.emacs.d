@@ -1,5 +1,8 @@
 (require 'gll-config)
 
+(define-derived-mode gll-vue-tpl-mode web-mode "gll-vue-tpl")
+(provide 'gll-vue-tpl-mode)
+
 (defun gll/fetch-project-task-detail (id)
   (let* ((json-object-type 'hash-table)
          (json-array-type 'list)
@@ -73,7 +76,7 @@ If BROWSER is provated, use the BROWSER open the link."
           (switch-to-buffer tmp-buffer)
 
           ;; 在没有file的buffer里执行web-mode会报错，导致后续语句全挂了
-          (ignore-errors (web-mode))
+          (ignore-errors (gll-vue-tpl-mode))
           (insert edit-content)
 
           ;; 切换model会重置local variable，所以只能在切换到web-mode后执行
