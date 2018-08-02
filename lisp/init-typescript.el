@@ -6,7 +6,8 @@
 
 (add-hook 'typescript-mode-hook #'mistkafka/setup-tide-mode)
 
-(require 'web-mode)
+(require-package 'web-mode)
+(require-package 'tide)
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 (add-hook 'web-mode-hook
 	  (lambda ()

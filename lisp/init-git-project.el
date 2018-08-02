@@ -2,8 +2,8 @@
 
 (require-package 's)
 (require 'json-storage)
-(require 'seq)
-(require 'dash)
+(require-package 'seq)
+(require-package 'dash)
 
 (require 'mistkafka-file)
 

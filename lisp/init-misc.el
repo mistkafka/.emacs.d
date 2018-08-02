@@ -125,8 +125,8 @@
 
 ;; yasnippet配置
 (require-package 'yasnippet)
-(require 'yasnippet)
-(require 'yasnippet-snippets)
+(require-package 'yasnippet)
+(require-package 'yasnippet-snippets)
 (yas-global-mode 1)
 (yas-reload-all)
 ;; (require 'company-yasnippet)

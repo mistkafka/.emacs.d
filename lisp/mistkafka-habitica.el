@@ -1,9 +1,9 @@
 ;;;  -*- lexical-binding: t; -*-
 
-(require 'json)
-(require 'org)
-(require 's)
-(require 'dash)
+(require-package 'json)
+(require-package 'org)
+(require-package 's)
+(require-package 'dash)
 
 ;; 暂时将uid, key存在这里面
 (require 'habitica-config)
