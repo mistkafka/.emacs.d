@@ -6,6 +6,6 @@
 (push 'company-lsp company-backends)
 (push 'company-yasnippet company-backends)
 
-(global-set-key (kbd (format "M-c")) 'company-complete)
+(global-set-key (kbd "M-c") 'company-complete)
 
 (provide 'init-company)

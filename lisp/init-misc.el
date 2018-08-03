@@ -72,21 +72,6 @@
 (require-package 'yasnippet-snippets)
 (yas-global-mode 1)
 (yas-reload-all)
-;; (require 'company-yasnippet)
-;; (push 'company-yasnippet company-backends)
-
-
-;; auto-complate
-;; (require-package 'auto-complete)
-;; (ac-config-default)
-;; (setq-default ac-sources '(ac-source-abbrev
-;;                            ac-source-dictionary
-;;                            ac-source-words-in-same-mode-buffers
-;; 			   ac-source-yasnippet))
-
-;; cnfonts
-(require-package'cnfonts)
-(cnfonts-enable)
 
 ;; js-doc
 (setq js-doc-mail-address "zhenguolin@me.com"

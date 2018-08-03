@@ -59,20 +59,26 @@
    (kbd (format "M-n %s" (s-join " " key-describe-items)))
    command))
 
-;; 加载配置
+;; 基础配置
 (require 'init-exec-path)
+
+;; 编程相关
 (require 'init-lsp)
 (require 'init-company)
 
 ;; 语言
 (require 'init-org)
-(require 'init-git-project)
 (require 'init-typescript)
 (require 'init-python)
 (require 'init-css)
 
-(require 'init-misc)
+;; 文件/项目
+(require 'init-git-project)
 (require 'mistkafka-file)
+
+;; 杂类 or 待分类
+(require 'init-misc)
+(require 'init-cnfonts)
 (require 'init-gll)
 (require 'mistkafka-habitica)
 
