@@ -61,9 +61,16 @@
 
 ;; 加载配置
 (require 'init-exec-path)
+(require 'init-lsp)
+(require 'init-company)
+
+;; 语言
 (require 'init-org)
 (require 'init-git-project)
 (require 'init-typescript)
+(require 'init-python)
+(require 'init-css)
+
 (require 'init-misc)
 (require 'mistkafka-file)
 (require 'init-gll)
@@ -81,7 +88,7 @@
  '(org-agenda-files (quote ("~/gtd/index.org.gpg")))
  '(package-selected-packages
    (quote
-    (tide-mode org-crypt tramp-cache dockerfile-mode stylus-mode editorconfig nginx-mode window-number multi-term paredit slime evil smartparens htmlize 0blayout color-theme-sanityinc-tomorrow tide js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode)))
+    (tide-mode org-crypt tramp-cache dockerfile-mode stylus-mode editorconfig nginx-mode window-number multi-term paredit slime evil smartparens htmlize 0blayout color-theme-sanityinc-tomorrow js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode)))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

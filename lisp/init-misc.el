@@ -49,63 +49,6 @@
 ;; flycheck语法检查器
 (require-package 'flycheck)
 
-;; lsp mode
-(require-package 'lsp-mode)
-(lsp-mode t)
-
-(require-package 'lsp-ui)
-(add-hook 'lsp-mode-hook 'lsp-ui-mode)
-(define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-(define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-;; (add-hook 'typescript-mode-hook 'flycheck-mode)
-;; (add-hook 'web-mode-hook 'flycheck-mode)
-
-;; (require-package 'lsp-javascript-typescript)
-;; (require 'lsp-typescript)
-;; (add-hook 'typescript-mode-hook #'lsp-typescript-enable) ;; for typescript support
-;; (add-hook 'js-mode-hook #'lsp-typescript-enable)
-;; (add-hook 'web-mode-hook #'lsp-typescript-enable) ;; *.tsx
-;; (add-hook 'js2-mode-hook #'lsp-typescript-enable) ;; for js2-mode support
-;; (add-hook 'rjsx-mode #'lsp-typescript-enable) ;; for rjsx-mode support
-;; (defconst
-;;   lsp-typescript--get-root
-;;   (lsp-make-traverser #'(lambda (dir)
-;; 			  (directory-files dir nil "tsconfig.json\\|package.json")
-;; 			  )
-;; 		      ))
-;; (lsp-define-stdio-client
-;;  lsp-typescript
-;;  "javascript"
-;;  lsp-typescript--get-root
-;;  '("typescript-language-server" "--stdio"))
-;; (add-hook 'typescript-mode-hook #'lsp-typescript-enable) ;; for typescript support
-;; (add-hook 'web-mode-hook #'lsp-typescript-enable) ;; *.tsx
-
-(require-package 'lsp-python)
-(add-hook 'python-mode-hook #'lsp-python-enable)
-
-;; 因为有冲突，所以先注释 https://emacs-china.org/t/topic/5492/2
-;; ;; (require-package 'lsp-css)
-;; (defconst lsp-css--get-root
-;;   (lsp-make-traverser #'(lambda (dir)
-;;                           (directory-files dir nil "package.json"))))
-
-;; (lsp-define-stdio-client
-;;  lsp-css
-;;  "css"
-;;  lsp-css--get-root
-;;  '("css-languageserver" "--stdio"))
-;; (add-hook 'css-mode-hook #'lsp-css-enable)
-;; (add-hook 'less-mode-hook #'lsp-css-enable)
-;; (add-hook 'sass-mode-hook #'lsp-css-enable)
-;; (add-hook 'scss-mode-hook #'lsp-css-enable)
-
-;; 配置company，作为lsp的补全前端
-(require-package 'company)
-(add-hook 'after-init-hook 'global-company-mode)
-(require-package 'company-lsp)
-(push 'company-lsp company-backends)
-
 ;; ert测试
 (defun mistkafka/misc/ert-test-current-buffer ()
   (interactive)
@@ -134,12 +77,12 @@
 
 
 ;; auto-complate
-(require-package 'auto-complete)
-(ac-config-default)
-(setq-default ac-sources '(ac-source-abbrev
-                           ac-source-dictionary
-                           ac-source-words-in-same-mode-buffers
-			   ac-source-yasnippet))
+;; (require-package 'auto-complete)
+;; (ac-config-default)
+;; (setq-default ac-sources '(ac-source-abbrev
+;;                            ac-source-dictionary
+;;                            ac-source-words-in-same-mode-buffers
+;; 			   ac-source-yasnippet))
 
 ;; cnfonts
 (require-package'cnfonts)
