@@ -75,8 +75,10 @@
 ;; 文件/项目
 (require 'init-git-project)
 (require 'mistkafka-file)
+(require 'init-eyebrowse)
 
 ;; 杂类 or 待分类
+(require 'init-ui)
 (require 'init-misc)
 (require 'init-cnfonts)
 (require 'init-gll)

@@ -41,11 +41,6 @@
 ;; (global-set-key (kbd "S-c") 'clipboard-kill-region)
 ;; (global-set-key (kbd "S-v") 'clipboard-yank)
 
-;; layout管理器
-(require-package 'eyebrowse)
-(eyebrowse-mode t)
-(mistkafka/keyboard/bind "l" 'eyebrowse-switch-to-window-config)
-
 ;; flycheck语法检查器
 (require-package 'flycheck)
 
@@ -238,40 +233,6 @@ Or prompt user input."
          (commit-message (shell-command-to-string (format "git log --format=\"%%B\" -n 1 %s" hash)))
          (project-task-id (string-to-number (nth 1 (s-match "\\[\\#\\([0-9]+\\)\\]" commit-message)))))
     (gll/open-project-task project-task-id)))
-
-;; custom mode-line
-(setq-default
- mode-line-format
- (list
-  ;; window number
-  '(:eval (propertize (format "__%s__" (window-numbering-get-number-string)) 'face '((:foreground "#308191"))))
-  " "
-  
-  ;; buffer name and edit status
-  '(:eval (propertize "%b" 'face 'font-lock-keyword-face
-                      'help-echo (buffer-file-name)))
-  ":%* "
-  
-  ;; relative position, column
-  "["
-  (propertize "%p" 'face 'font-lock-constant-face) ;; % above top
-  ","
-  (propertize "%02c" 'face 'font-lock-type-face)
-  "] "
-
-  ;; the current major mode for the buffer.
-  "["
-  '(:eval (propertize "%m" 'face 'font-lock-string-face
-                      'help-echo buffer-file-coding-system))
-  "] "
-
-  '(:eval (propertize (magit-get-current-branch) 'face 'font-lock-string-face))
-
-  'org-pomodoro-mode-line  
-  ))
-
-;; remove tool-bar
-(tool-bar-mode -1)
 
 ;; poor kill-ring-show
 (setq mistkafka/kill-ring/snippets nil)
