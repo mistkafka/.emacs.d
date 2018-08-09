@@ -2,10 +2,23 @@
 
 (eyebrowse-mode t)
 
+(defun mistkafka/eyebrowse-create-window-config ()
+  "新建layout之后，立即进行命名"
+  (interactive)
+  (eyebrowse-create-window-config)
+  (call-interactively 'eyebrowse-rename-window-config)
+  )
+
+;; s -> switch，切换
 (mistkafka/keyboard/bind "ls" 'eyebrowse-switch-to-window-config)
+;; r -> rename
 (mistkafka/keyboard/bind "lr" 'eyebrowse-rename-window-config)
+;; x -> 象征'叉'即关闭
 (mistkafka/keyboard/bind "lx" 'eyebrowse-close-window-config)
+;; l -> last
 (mistkafka/keyboard/bind "ll" 'eyebrowse-last-window-config)
+;; n -> new 
+(mistkafka/keyboard/bind "ln" 'mistkafka/eyebrowse-create-window-config)
 
 (mistkafka/keyboard/bind "l0" 'eyebrowse-switch-to-window-config-0)
 (mistkafka/keyboard/bind "l1" 'eyebrowse-switch-to-window-config-1)
