@@ -81,7 +81,7 @@
 (require 'init-ui)
 (require 'init-misc)
 (require 'init-cnfonts)
-(require 'mistkafka-habitica)
+;(require 'mistkafka-habitica)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -95,7 +95,7 @@
  '(org-agenda-files (quote ("~/gtd/index.org.gpg")))
  '(package-selected-packages
    (quote
-    (tide-mode org-crypt tramp-cache dockerfile-mode stylus-mode editorconfig nginx-mode window-number multi-term paredit slime evil smartparens htmlize 0blayout color-theme-sanityinc-tomorrow js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode)))
+    (log4j-mode pug-mode vue-mode tide-mode org-crypt tramp-cache dockerfile-mode stylus-mode editorconfig nginx-mode window-number multi-term paredit slime evil smartparens htmlize 0blayout color-theme-sanityinc-tomorrow js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode)))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
