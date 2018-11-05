@@ -81,7 +81,6 @@
 (require 'init-ui)
 (require 'init-misc)
 (require 'init-cnfonts)
-(require 'init-gll)
 (require 'mistkafka-habitica)
 
 (custom-set-variables
