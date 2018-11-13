@@ -122,9 +122,6 @@ Or prompt user input."
 
 (add-hook 'magit-mode-hook
           'recovery-my-leader-key)
-;; 移除term-mode的"M-n"绑定
-(add-hook 'term-mode-hook
-          'recovery-my-leader-key)
 
 ;; common lisp
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
@@ -145,48 +142,6 @@ Or prompt user input."
 (require-package 'window-numbering)
 (window-numbering-mode 1)
 
-;; term-mode相关配置
-(defun mistkafka/term-mode/send-init-command ()
-  "source ~/.bash_profile来初始化终端环境"
-  (interactive)
-  (term-send-raw-string "source ~/.bash_profile")
-  (term-send-raw-string "\C-m")
-  )
-
-(defun mistkafka/term-mode/toggle-term-line-char-mode ()
-  (interactive)
-  (cond
-   ((term-in-char-mode) (progn
-                          (term-line-mode)
-                          (message "切换到line-mode")))
-   ((term-in-line-mode) (progn
-                          (term-char-mode)
-                          (message "切换到char-mode")))
-    )
-   )
-
-(setq mistkafka/term-mode/gll-term-names '("server" "mysql" "tsc" "terminal"))
-
-(defun mistkafka/term-mode/init-gll-terms-group ()
-  (interactive)
-  (cl-loop for term-name in mistkafka/term-mode/gll-term-names
-           do (ansi-term "/bin/bash" term-name))
-  (run-at-time "0.5" nil 'mistkafka/term-mode/do-send-init-command))
-
-(defun mistkafka/term-mode/reset-keybind ()
-  (interactive)
-  (recovery-my-leader-key)
-  (local-set-key (kbd "M-x") nil))
-
-(defun mistkafka/term-mode/do-send-init-command ()
-  (cl-loop for term-name in mistkafka/term-mode/gll-term-names
-           for bffr-name = (format "*%s*" term-name)
-           do (when bffr-name
-                (with-current-buffer bffr-name
-                  (rename-buffer term-name)
-                  (mistkafka/term-mode/send-init-command)
-                  (linum-mode -1)
-                  (mistkafka/term-mode/reset-keybind)))))
 
 ;; editor config
 (require-package 'editorconfig)
