@@ -26,7 +26,7 @@
   (org-crypt-use-before-save-magic)
   (setq org-crypt-tag-matcher "secret")
   (setq org-tags-exclude-from-inheritance (quote ("secret")))
-  (setq org-crypt-key "193E92ED"))
+  (setq org-crypt-key "98DE5D28"))
 
 (defun mistkafka/org-defun-alias-funs ()
   
