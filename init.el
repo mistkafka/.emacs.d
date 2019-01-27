@@ -65,6 +65,7 @@
 ;; 编程相关
 (require 'init-lsp)
 (require 'init-company)
+(require 'init-term)
 
 ;; 语言
 (require 'init-org)
@@ -81,8 +82,7 @@
 (require 'init-ui)
 (require 'init-misc)
 (require 'init-cnfonts)
-(require 'init-gll)
-;; (require 'mistkafka-habitica)
+;(require 'mistkafka-habitica)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -96,7 +96,7 @@
  '(org-agenda-files (quote ("~/gtd/plan.org.gpg" "~/gtd/index.org.gpg")))
  '(package-selected-packages
    (quote
-    (tide-mode org-crypt tramp-cache dockerfile-mode stylus-mode editorconfig nginx-mode window-number multi-term paredit slime evil smartparens htmlize 0blayout color-theme-sanityinc-tomorrow js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode)))
+    (restclient tide-mode org-crypt tramp-cache dockerfile-mode stylus-mode editorconfig nginx-mode window-number multi-term paredit slime evil smartparens htmlize 0blayout color-theme-sanityinc-tomorrow js-doc cnfonts counsel auto-complete page-break-lines yasnippet-snippets yasnippet-snippetst yasnippet doom-themes use-package lsp-python company-lsp lsp-javascript-typescript lsp-ui lsp-mode eyebrowse which-key typescript-mode magit ivy web-mode)))
  '(safe-local-variable-values (quote ((epa-file-select-keys "98DE5D28"))))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces

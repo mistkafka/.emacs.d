@@ -122,9 +122,6 @@ Or prompt user input."
 
 (add-hook 'magit-mode-hook
           'recovery-my-leader-key)
-;; 移除term-mode的"M-n"绑定
-(add-hook 'term-mode-hook
-          'recovery-my-leader-key)
 
 ;; common lisp
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
@@ -145,79 +142,6 @@ Or prompt user input."
 (require-package 'window-numbering)
 (window-numbering-mode 1)
 
-;; term-mode相关配置
-(defun mistkafka/term-mode/send-init-command ()
-  "source ~/.bash_profile来初始化终端环境"
-  (interactive)
-  (term-send-raw-string "source ~/.bash_profile")
-  (term-send-raw-string "\C-m")
-  )
-
-(defun mistkafka/term-mode/toggle-term-line-char-mode ()
-  (interactive)
-  (cond
-   ((term-in-char-mode) (progn
-                          (term-line-mode)
-                          (message "切换到line-mode")))
-   ((term-in-line-mode) (progn
-                          (term-char-mode)
-                          (message "切换到char-mode")))
-    )
-   )
-
-(setq mistkafka/term-mode/gll-term-names '("server" "mysql" "tsc" "terminal"))
-
-(defun mistkafka/term-mode/init-gll-terms-group ()
-  (interactive)
-  (cl-loop for term-name in mistkafka/term-mode/gll-term-names
-           do (ansi-term "/bin/bash" term-name))
-  (run-at-time "0.5" nil 'mistkafka/term-mode/do-send-init-command))
-
-(defun mistkafka/term-mode/reset-keybind ()
-  (interactive)
-  (recovery-my-leader-key)
-  (local-set-key (kbd "M-x") nil))
-
-(defun mistkafka/term-mode/do-send-init-command ()
-  (cl-loop for term-name in mistkafka/term-mode/gll-term-names
-           for bffr-name = (format "*%s*" term-name)
-           do (when bffr-name
-                (with-current-buffer bffr-name
-                  (rename-buffer term-name)
-                  (mistkafka/term-mode/send-init-command)
-                  (linum-mode -1)
-                  (mistkafka/term-mode/reset-keybind)))))
-
-
-;; 邮箱配置，http://www.ict4g.net/adolfo/notes/2014/12/27/emacs-imap.html
-
-(add-to-list 'load-path "/usr/local/Cellar/mu/HEAD-b952724/share/emacs/site-lisp/mu/mu4e/")
-(require 'mu4e)
-;; tell mu4e where my Maildir is
-(setq mu4e-maildir "/Users/mistkafka/.maildir")
-;; tell mu4e how to sync email
-(setq mu4e-get-mail-command "/usr/local/Cellar/isync/1.3.0/bin/mbsync -a")
-;; tell mu4e to use w3m for html rendering
-;; (setq mu4e-html2text-command "/usr/local/Cellar/w3m/0.5.3_5/bin/w3m -T text/html")
-;; (setq mu4e-html2text-command nil)
-(setq mu4e-view-prefer-html t)
-
-;; taken from mu4e page to define bookmarks，这个我不知道有什么用
-(add-to-list 'mu4e-bookmarks
-             '("size:5M..500M"       "Big messages"     ?b))
-;; mu4e requires to specify drafts, sent, and trash dirs
-;; a smarter configuration allows to select directories according to the account (see mu4e page)
-(setq mu4e-drafts-folder "/Drafts")
-(setq mu4e-sent-folder "/Sent")
-(setq mu4e-trash-folder "/Trash")
-(add-hook 'mu4e-view-mode-hook
-  (lambda()
-    ;; try to emulate some of the eww key-bindings
-    (local-set-key (kbd "<tab>") 'shr-next-link)
-    (local-set-key (kbd "<backtab>") 'shr-previous-link)))
-
-(mistkafka/keyboard/bind "mm" 'mu4e)
-(mistkafka/keyboard/bind "mu" 'mu4e-update-mail-and-index)
 
 ;; editor config
 (require-package 'editorconfig)
@@ -269,5 +193,16 @@ Or prompt user input."
 (mistkafka/keyboard/bind "ka" 'mistkafka/kill-ring/add--from-latest-kill-ring)
 (mistkafka/keyboard/bind "ki" 'mistkafka/kill-ring/insert)
 (mistkafka/keyboard/bind "kc" 'mistkafka/kill-ring/copy)
+
+
+;; note
+(defun mistkafka/open-daily-log-file ()
+  (interactive)
+  (find-file "~/misc-note/glowing.org.gpg"))
+
+(mistkafka/keyboard/bind "ol" 'mistkafka/open-daily-log-file)
+
+;; tramp mode
+(setq tramp-copy-size-limit 1000000)
 
 (provide 'init-misc)

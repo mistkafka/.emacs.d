@@ -132,7 +132,7 @@
 (defvar mistkafka/git-project/locate-paths-of-code '("gllue" "elisp" "node.js" "front-end" "elisp")
   "更新projects时，需要扫描的几个文件夹")
 
-(defvar mistkafka/git-project/cache-file-path "/Users/mistkafka/.emacs.d/.cache/git-projects"
+(defvar mistkafka/git-project/cache-file-path "~/.emacs.d/.cache/git-projects"
   "缓存文件的路径")
 
 (defconst mistkafka/git-project/cache-storage (json-storage/create-storage
