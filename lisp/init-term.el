@@ -63,7 +63,7 @@
 
 (defun mistkafka/term-mode/do-send-special-init-command()
   (with-current-buffer "mysql"
-    (mistkafka/term-mode/execute-shell-command "mysql -uroot -p123 mia"))
+    (mistkafka/term-mode/execute-shell-command "mysql -uroot mia"))
 
   (with-current-buffer "supervisorctl"
     (mistkafka/term-mode/execute-shell-command "sudo supervisorctl"))
