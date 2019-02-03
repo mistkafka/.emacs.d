@@ -204,5 +204,6 @@ Or prompt user input."
 
 ;; tramp mode
 (setq tramp-copy-size-limit 1000000)
+(setq tramp-inline-compress-start-size 1000000)
 
 (provide 'init-misc)
