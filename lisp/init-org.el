@@ -58,6 +58,7 @@
          "\\|"
          "\\(?:\\*\\|[+-]?[[:alnum:].,\\]*[[:alnum:]]\\)\\)")))
 
+(require-package 'org-pomodoro)
 (defun mistkafka/org-setup-pomodoro ()
   (add-hook 'org-pomodoro-finished-hook
             (lambda ()
@@ -110,7 +111,7 @@
 (defun mistkafka/org-mode/start-pomodoro ()
   (interactive)
   (with-current-buffer (find-file-noselect "~/gtd/pomodoro.org.gpg")
-    (goto-char (org-find-property "IS-POMODORO-HEADLINE"))
+    (goto-char (org-find-property "POMODORO"))
     (org-pomodoro)
     (save-buffer)
     ))
