@@ -4,6 +4,7 @@
 (require 'json-storage)
 (require-package 'seq)
 (require-package 'dash)
+(require-package 'lsp-mode)
 
 (require 'mistkafka-file)
 
@@ -17,7 +18,10 @@
 (defun mistkafka/git-project/find-file ()
   "Find file in current git project."
   (interactive)
-  (let* ((default-directory (mistkafka/git-project/get-git-root-path))
+  (let* ((default-directory (if (lsp-workspace-root)
+                                (lsp-workspace-root)
+                              (mistkafka/git-project/get-git-root-path)
+                              ))
 	 (files (split-string (shell-command-to-string "git ls-files -z") "\0" t))
 	 (selected-file (ivy-read "pattern: " files)))
     (when selected-file
