@@ -5,6 +5,9 @@
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory)) ;; 添加`./lisp'到`load-path'中，这里将放置所有配置文件
 (package-initialize)
 
+;; fix mac 10.15无法iCloud打开文件夹的问题
+(setq dired-use-ls-dired nil)
+
 (defun require-package (package)
   "如果PACKAGE已经安装，则`require'这个PACKAGE。
 否则，安装这个PACKAGE"
