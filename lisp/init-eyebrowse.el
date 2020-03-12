@@ -11,6 +11,7 @@
 
 ;; s -> switch，切换
 (mistkafka/keyboard/bind "ls" 'eyebrowse-switch-to-window-config)
+(mistkafka/keyboard/bind "s" 'eyebrowse-switch-to-window-config) ; switch非常高频，所以直接绑在s上
 ;; r -> rename
 (mistkafka/keyboard/bind "lr" 'eyebrowse-rename-window-config)
 ;; x -> 象征'叉'即关闭

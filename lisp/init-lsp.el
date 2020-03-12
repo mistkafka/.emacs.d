@@ -2,6 +2,7 @@
 (require-package 'lsp-mode)
 (lsp-mode t)
 
+;; disable lsp-ui
 ;; (require-package 'lsp-ui)
 ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)

@@ -79,26 +79,6 @@
               (define-key typescript-mode-map "\C-ci" 'js-doc-insert-function-doc)
               (define-key typescript-mode-map "@" 'js-doc-insert-tag)))
 
-;; Apple
-(defun mistkafka/utils/get-region-str ()
-  (buffer-substring-no-properties
-   (region-beginning)
-   (region-end)))
-
-(defun mistkafka/osx/speech ()
-  "Speech region content.
-Or word at point.
-Or prompt user input."
-  (interactive)
-  (let ((content))
-    (cond ((region-active-p) (setq content (mistkafka/utils/get-region-str)))
-          ((word-at-point) (setq content (word-at-point)))
-          (t (setq content (ivy-read "Speech Content: " nil))))
-
-    (call-process "osascript"
-                  nil 0 nil
-                  "-e" (format "say \"%s\"" content))))
-
 ;; git emoji
 (require 'misc-config)
 (defun mistkafka/counsel-git-emoji ()
@@ -137,6 +117,7 @@ Or prompt user input."
   (call-process "osascript"
                 nil 0 nil
                 "-e" (format "display dialog \"%s\" with title \"%s\"" message title)))
+
 
 ;; window编号
 (require-package 'window-numbering)
@@ -203,7 +184,7 @@ Or prompt user input."
 (mistkafka/keyboard/bind "ol" 'mistkafka/open-daily-log-file)
 
 ;; tramp mode
-(setq tramp-copy-size-limit 1000000)
-(setq tramp-inline-compress-start-size 1000000)
+(setq tramp-copy-size-limit 10000000)
+(setq tramp-inline-compress-start-size 10000000)
 
 (provide 'init-misc)

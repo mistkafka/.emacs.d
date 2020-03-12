@@ -76,4 +76,10 @@
   (mistkafka/term-mode/execute-shell-command "python3")
   )
 
+(defun mistkafka/term-mode/kill-all-glow-terms()
+  (interactive)
+  (cl-loop for term-name in mistkafka/term-mode/glow-devbox-term-names
+           do (with-current-buffer term-name
+                (kill-this-buffer))))
+
 (provide 'init-term)

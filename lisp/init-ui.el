@@ -36,4 +36,12 @@
 ;; remove tool-bar
 (tool-bar-mode -1)
 
+;; ^L换页符显示成横线
+(require-package 'page-break-lines)
+(global-page-break-lines-mode t)
+(defun m/ui/insert-page-break-line ()
+  (interactive)
+  (insert ?\^L))
+
+
 (provide 'init-ui)
