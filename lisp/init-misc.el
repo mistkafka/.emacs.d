@@ -184,7 +184,7 @@
 (mistkafka/keyboard/bind "ol" 'mistkafka/open-daily-log-file)
 
 ;; tramp mode
-(setq tramp-copy-size-limit 1000000)
-(setq tramp-inline-compress-start-size 1000000)
+(setq tramp-copy-size-limit 10000000)
+(setq tramp-inline-compress-start-size 10000000)
 
 (provide 'init-misc)
