@@ -200,7 +200,7 @@
       (mistkafka/git-project/find-file))
     ))
 
-(defun mistkafka/git-project/registe-current-project ()
+(defun mistkafka/git-project/register-current-project ()
   "把当前的git项目注册到project列表里。
 有些时候一些git项目并不在~/Code目录下，用locate去搜索很耗时，所以采用这种手动注册的方式来进行。"
   (interactive)
