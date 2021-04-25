@@ -71,7 +71,7 @@
   (setq mistkafka/git-project/git-grep--history-input-texts nil)
   (let* ((default-directory (mistkafka/git-project/determine-git-grep-path is-in-current-directory?))
 	 (keyword (ivy-read "keyword: " nil))
-	 (cmd (format "git --no-pager grep --full-name -n --no-color -i -e \"%s\"" keyword))
+	 (cmd (format "git --no-pager grep --full-name -n --no-color -i -e \"%s\" -- './*' ':(exclude)*.jsbundle'" keyword))
 	 (result-str (shell-command-to-string cmd))
 	 (candidates (split-string result-str "\n" t)))
     (setq mistkafka/git-project/git-grep--last-candidates candidates)
@@ -133,7 +133,7 @@
   (mistkafka/git-project/copy-file-name-to-clipboard 
    (mistkafka/git-project/get-file-name-in-project)))
 
-(defvar mistkafka/git-project/locate-paths-of-code '("gllue" "elisp" "node.js" "front-end" "elisp")
+(defvar mistkafka/git-project/locate-paths-of-code '("js" "elisp" "node.js" "front-end" "elisp" "Glow")
   "更新projects时，需要扫描的几个文件夹")
 
 (defvar mistkafka/git-project/cache-file-path "~/.emacs.d/.cache/git-projects"
@@ -162,11 +162,10 @@
 
 (defun mistkafka/git-project/do-update-projects-cache ()
   "负责执行projects缓存的更新"
-  (let* ((cmd-tpl "locate .git | grep '^/Users/mistkafka/Code/\\(%s\\).*\\.git$' ")
-	 (locate-paths (s-join "\\|" mistkafka/git-project/locate-paths-of-code))
-	 (cmd (format cmd-tpl locate-paths))
+  (let* ((cmd "locate .git | grep '^/Users/zhenguo/.*\\.git$' ")
 	 (result-str (shell-command-to-string cmd)))
     (setq result-str (s-replace-regexp "/\\.git$" "" result-str))
+    (setq result-str (s-replace-regexp "^/Users/zhenguo" "~" result-str))
     (with-temp-file mistkafka/git-project/cache-file-path
       (delete-region (point-min) (point-max))
       (insert result-str)
