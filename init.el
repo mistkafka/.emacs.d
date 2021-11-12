@@ -69,14 +69,14 @@
 (require 'init-lsp)
 (require 'init-company)
 (require 'init-term)
-(require 'init-vue)
+;; (require 'init-vue)
 
 ;; 语言
 (require 'init-org)
 (require 'init-typescript)
 (require 'init-python)
-(require 'init-css)
-(require 'init-swift)
+;; (require 'init-css)
+;; (require 'init-swift)
 
 ;; 文件/项目
 (require 'init-git-project)
